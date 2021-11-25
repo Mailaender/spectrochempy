@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>What’s new &mdash; SpectroChemPy v0.2.17rc0 0.2.17rc0 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/plot_directive.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/theme_override.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/gallery-binder.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/gallery-dataframe.css" type="text/css" />
+    <link rel="shortcut icon" href="../../_static/scpy.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/clipboard.min.js"></script>
+        <script src="../../_static/copybutton.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.0/dist/embed-amd.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="API reference" href="index.html" />
+    <link rel="prev" title="API Configuration" href="../api/api.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html">
+            <img src="../../_static/scpy.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.2.17rc0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+
+    <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+      <span class="rst-current-version" data-toggle="rst-current-version">
+        <span class="fa fa-book"> SpectroChemPy </span>
+        version: stable
+        <span class="fa fa-caret-down"></span>
+      </span>
+        <div class="rst-other-versions">
+            <dl>
+                <dt>Other versions</dt>
+                
+                    
+                        <dd><a href="https://www.spectrochempy.fr/latest/index.html"">LATEST</a></dd>
+                    
+                
+                    
+                
+            </dl>
+            <hr/>
+            <dl>
+                <dt>Downloads</dt>
+                <!-- PDF docs are not built anymore
+                <dd><a href="https://www.spectrochempy.fr/downloads/stable-spectrochempy.pdf">PDF</a></dd> -->
+                <dd><a href="https://www.spectrochempy.fr/downloads/stable-spectrochempy-notebooks.zip"
+                        title="All Jupyter Notebooks used in this documentation" >Notebooks</a></dd>
+                <dd><a href="https://www.spectrochempy.fr/downloads/set_colab.sh"
+                       title="'Colaboratory installation script" >set_colab.sh</a></dd>
+
+            </dl>
+            <hr/>
+            <dl>
+                <dt>Sources on GitHub</dt>
+                <dd><a href="https://github.com/spectrochempy/spectrochempy/releases/latest">Stable</a></dd>
+                <dd><a href="https://github.com/spectrochempy/spectrochempy/tree/master/">Latest</a></dd>
+
+            </dl>
+
+        </div>
+    </div>
+
+    
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">Home</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../gettingstarted/whyscpy.html">Why <strong>SpectroChemPy</strong>  ?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../gettingstarted/overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../gettingstarted/gallery/auto_examples/index.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../gettingstarted/install/index.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../gettingstarted/papers.html">Papers citing <strong>SpectroChemPy</strong></a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User's Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../introduction/introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../objects.html">Data structures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../importexport/importexport.html">Import &amp; Export</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../plotting/plotting.html">Plotting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../processing/processing.html">Processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../analysis/analysis.html">Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../fitting/fitting.html">Fitting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../units/units.html">Units &amp; Quantities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../databases/databases.html">Databases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/api.html">API Configuration</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference &amp; Help</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">What’s new</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#version-0-2-17">Version 0.2.17</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-0-2-16">Version 0.2.16</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-0-2-15">Version 0.2.15</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-0-2-14">Version 0.2.14</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-0-2-13">Version 0.2.13</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-0-2-12">Version 0.2.12</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-0-2-11">Version 0.2.11</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-0-2-10">Version 0.2.10</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-0-2-9">Version 0.2.9</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-0-2-8">Version 0.2.8</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-0-2-7">Version 0.2.7</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-0-2-6">Version 0.2.6</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-0-2-5">Version 0.2.5</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-0-2-4">Version 0.2.4</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-0-2-0">Version 0.2.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-0-1-x">Version 0.1.x</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="index.html">API reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently asked questions (FAQ)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../devguide/issues.html">Bug reports &amp; feature request</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../devguide/examples.html">Adding new tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../devguide/examples.html#adding-your-examples-to-the-gallery">Adding your examples to the gallery</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../devguide/contributing.html">Developer’s Guide</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Credits</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../credits/credits.html">Acknowledgments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../credits/citing.html">Citing  <strong>SpectroChemPy</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../credits/license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../credits/seealso.html">See also</a></li>
+</ul>
+
+
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">SpectroChemPy v0.2.17rc0</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>What’s new</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/userguide/reference/changelog.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+    
+    
+           <div itemprop="articleBody">
+             
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<section id="whats-new">
+<h1>What’s new<a class="headerlink" href="#whats-new" title="Permalink to this headline">¶</a></h1>
+<section id="version-0-2-17">
+<h2>Version 0.2.17<a class="headerlink" href="#version-0-2-17" title="Permalink to this headline">¶</a></h2>
+<p><strong>TASKS</strong></p>
+<p><strong>NEW FEATURES</strong></p>
+<p><strong>BUGS FIXED</strong></p>
+</section>
+<section id="version-0-2-16">
+<h2>Version 0.2.16<a class="headerlink" href="#version-0-2-16" title="Permalink to this headline">¶</a></h2>
+<p><strong>NEW FEATURES</strong></p>
+<ul class="simple">
+<li><p>IRIS: Added 1D datasets.</p></li>
+<li><p>IRIS: Added kernel function for diffusion .</p></li>
+<li><p>EFA: Added indication of progress.</p></li>
+<li><p>Cantera: Added differential evolution algorithm in cantera utilities.</p></li>
+<li><p>Cantera: Added PFR object in cantera utilities.</p></li>
+<li><p>DOC: Added list of papers citing spectrochempy.</p></li>
+<li><p>Github action workflows to test, build and publish conda package and
+docs in replacement of Travis CI.</p></li>
+<li><p>Use CodeClimate to show Coverage info</p></li>
+</ul>
+<p><strong>BUGS FIXED</strong></p>
+<ul class="simple">
+<li><p>IRIS example after modification of readers.</p></li>
+<li><p>IRIS: automatic search of the L-curve corner.</p></li>
+<li><p>MCR-ALS returns the ‘soft’ concentration matrix.</p></li>
+<li><p>Document building configuration after update of external packages.</p></li>
+<li><p>DOC: fix several broken links.</p></li>
+<li><p>Baseline correction default changed.</p></li>
+<li><p>Compatibility with newest change in Colab</p></li>
+</ul>
+</section>
+<section id="version-0-2-15">
+<h2>Version 0.2.15<a class="headerlink" href="#version-0-2-15" title="Permalink to this headline">¶</a></h2>
+<p><strong>NEW FEATURES</strong></p>
+<ul class="simple">
+<li><p>Added a baseline correction method: <code class="docutils literal notranslate"><span class="pre">basc</span></code>.</p></li>
+<li><p>Baseline ranges can be stored in meta.regions[‘baseline’] - basc will
+recognize them.</p></li>
+</ul>
+<p><strong>BUGS FIXED</strong></p>
+<ul class="simple">
+<li><p>Comparison of dataset when containing metadata in testing functions.</p></li>
+<li><p>Some fixes relative to Project.</p></li>
+<li><p>Bug in the <code class="docutils literal notranslate"><span class="pre">to</span></code> function.</p></li>
+</ul>
+</section>
+<section id="version-0-2-14">
+<h2>Version 0.2.14<a class="headerlink" href="#version-0-2-14" title="Permalink to this headline">¶</a></h2>
+<p><strong>NEW FEATURES</strong></p>
+<ul class="simple">
+<li><p>A default coordinate can now be selected for multiple coordinates
+dimensions.</p></li>
+</ul>
+<p><strong>BUGS FIXED</strong></p>
+<ul class="simple">
+<li><p>Alignment along several dimensions (issue #248)</p></li>
+<li><p>to() and ito() methods have been fixed to work correctly (issue #255)</p></li>
+<li><p>Baseline correction works on all dimensions</p></li>
+</ul>
+</section>
+<section id="version-0-2-13">
+<h2>Version 0.2.13<a class="headerlink" href="#version-0-2-13" title="Permalink to this headline">¶</a></h2>
+<p><strong>BUGS FIXED</strong></p>
+<ul class="simple">
+<li><p>Solved the problem that reading of experimental datasets was too slow
+in v.0.2.12.</p></li>
+</ul>
+</section>
+<section id="version-0-2-12">
+<h2>Version 0.2.12<a class="headerlink" href="#version-0-2-12" title="Permalink to this headline">¶</a></h2>
+<p><strong>BUGS FIXED</strong></p>
+<ul>
+<li><p>LinearCoord operations now working.</p></li>
+<li><p>Baseline default now “sequential” as expected.</p>
+<p><strong>WARNING</strong>: It was wrongly set to “mutivariate” in previous
+releases, so you should expect some difference with processings you
+may have done before.</p>
+</li>
+<li><p>Comparison of coordinates now correct for mathematical operations.</p></li>
+<li><p>Alignment methods now working (except for multidimensional
+alignement).</p></li>
+</ul>
+</section>
+<section id="version-0-2-11">
+<h2>Version 0.2.11<a class="headerlink" href="#version-0-2-11" title="Permalink to this headline">¶</a></h2>
+<p><strong>BUGS FIXED</strong></p>
+<ul class="simple">
+<li><p>Plot2D now works when more than one coord in ‘y’ axis (#238).</p></li>
+<li><p>Spectrochempy_data location have been corrected (#239).</p></li>
+</ul>
+</section>
+<section id="version-0-2-10">
+<h2>Version 0.2.10<a class="headerlink" href="#version-0-2-10" title="Permalink to this headline">¶</a></h2>
+<p><strong>NEW FEATURES</strong></p>
+<ul>
+<li><p>All data for tests and examples are now external.</p>
+<p>They are now located in a separate conda package:
+<code class="docutils literal notranslate"><span class="pre">spectrochempy_data</span></code>.</p>
+</li>
+<li><p>Installation in Colab with Examples is now supported.</p></li>
+</ul>
+<p><strong>BUGS FIXED</strong></p>
+<ul class="simple">
+<li><p>Read_quadera() and example now based on a correct asc file</p></li>
+</ul>
+</section>
+<section id="version-0-2-9">
+<h2>Version 0.2.9<a class="headerlink" href="#version-0-2-9" title="Permalink to this headline">¶</a></h2>
+<p><strong>BUGS FIXED</strong></p>
+<ul class="simple">
+<li><p>Hotfix regarding dispay of NMR x scale</p></li>
+</ul>
+</section>
+<section id="version-0-2-8">
+<h2>Version 0.2.8<a class="headerlink" href="#version-0-2-8" title="Permalink to this headline">¶</a></h2>
+<p><strong>NEW FEATURES</strong></p>
+<ul class="simple">
+<li><p>Added write_csv() dir 1D datasets</p></li>
+<li><p>Added read_quadera() for Pfeiffer Vacuum’s QUADERA® MS files</p></li>
+<li><p>Added test for trapz(), simps(), readquadera()</p></li>
+<li><p>Improved displaying of Interferograms</p></li>
+</ul>
+<p><strong>BUGS FIXED</strong></p>
+<ul class="simple">
+<li><p>Problem with trapz(), simps()</p></li>
+<li><p>FIX: interferogram x scaling</p></li>
+</ul>
+</section>
+<section id="version-0-2-7">
+<h2>Version 0.2.7<a class="headerlink" href="#version-0-2-7" title="Permalink to this headline">¶</a></h2>
+<p><strong>NEW FEATURES</strong></p>
+<ul class="simple">
+<li><p>Test and data for read_carroucell(), read_srs(), read_dso()</p></li>
+<li><p>Added NMR processing of 2D spectra.</p></li>
+<li><p>Added FTIR interferogram processing.</p></li>
+</ul>
+<p><strong>BUGS FIXED</strong></p>
+<ul class="simple">
+<li><p>Problem with read_carroucell(), read_srs(), read_dso()</p></li>
+<li><p>Colaboratory compatibility</p></li>
+<li><p>Improved check updates</p></li>
+</ul>
+</section>
+<section id="version-0-2-6">
+<h2>Version 0.2.6<a class="headerlink" href="#version-0-2-6" title="Permalink to this headline">¶</a></h2>
+<p><strong>NEW FEATURES</strong></p>
+<ul class="simple">
+<li><p>Check for new version on anaconda cloud spectrocat channel.</p></li>
+<li><p>1D NMR processing with the addition of several new methods.</p></li>
+<li><p>Improved handling of Linear coordinates.</p></li>
+</ul>
+<p><strong>BUGS FIXED</strong></p>
+<ul class="simple">
+<li><p>Adding quantity to datasets with different scaling (#199).</p></li>
+<li><p>Math operates now on linear coordinates.</p></li>
+<li><p>Compatibility with python 3.6</p></li>
+</ul>
+</section>
+<section id="version-0-2-5">
+<h2>Version 0.2.5<a class="headerlink" href="#version-0-2-5" title="Permalink to this headline">¶</a></h2>
+<p><strong>TASKS</strong></p>
+<ul class="simple">
+<li><p>Docker image building.</p></li>
+<li><p>Instructions to use it added in the documentation.</p></li>
+</ul>
+<p><strong>NEW FEATURES</strong></p>
+<ul class="simple">
+<li><p>Cantera installation optional.</p></li>
+<li><p>Use of pyqt for matplotlib optional.</p></li>
+</ul>
+<p><strong>BUGS FIXED</strong></p>
+<ul class="simple">
+<li><p>Added fonts in order to solve missing fonts problems on linux and
+windows.</p></li>
+</ul>
+</section>
+<section id="version-0-2-4">
+<h2>Version 0.2.4<a class="headerlink" href="#version-0-2-4" title="Permalink to this headline">¶</a></h2>
+<p><strong>TASKS</strong></p>
+<ul class="simple">
+<li><p>Documentation largely revisited and hopefully improved. <em>Still some
+work to be done</em>.</p></li>
+<li><p>NDMath (mathematical and dataset creation routines) module revisited.
+<em>Still some work to be done</em>.</p></li>
+</ul>
+<p><strong>NEW FEATURES</strong></p>
+<ul class="simple">
+<li><p>Changed CoordRange behavior.</p></li>
+</ul>
+<p><strong>BUGS FIXED</strong></p>
+<ul class="simple">
+<li><p>Fix a problem with importing the API.</p></li>
+<li><p>Fix dim handling in processing functions.</p></li>
+</ul>
+</section>
+<section id="version-0-2-0">
+<h2>Version 0.2.0<a class="headerlink" href="#version-0-2-0" title="Permalink to this headline">¶</a></h2>
+<p><strong>NEW FEATURES</strong></p>
+<ul class="simple">
+<li><p>Copyright update.</p></li>
+<li><p>Requirements and env yml files updated.</p></li>
+<li><p>Use of the coordinates in math operation improved.</p></li>
+<li><p>Added ROI and Offset properties to NDArrays.</p></li>
+<li><p>Readers / Writers revisited.</p></li>
+<li><p>Bruker TOPSPIN reader.</p></li>
+<li><p>Added LabSpec reader for .txt exported files.</p></li>
+<li><p>Simplified the format of scp file - now zipped JSON files.</p></li>
+<li><p>Rewriting json serialiser.</p></li>
+<li><p>Add function pathclean to the API.</p></li>
+<li><p>Add some array creation function to NDMath.</p></li>
+<li><p>Refactoring plotting preferences system.</p></li>
+<li><p>Baseline correction now accept single value for ranges.</p></li>
+<li><p>Add a waterfall plot.</p></li>
+<li><p>Refactoring plot2D and 1D methods.</p></li>
+<li><p>Added Simpson’rule integration.</p></li>
+<li><p>Addition of multiple coordinates to a dimension works better.</p></li>
+<li><p>Added Linear coordinates (EXPERIMENTAL).</p></li>
+<li><p>Test for NDDataset dtype change at initialisation.</p></li>
+<li><p>Added subdir of txt files in ramandata.</p></li>
+<li><p>Comparison of datasets improved in testing.py.</p></li>
+<li><p>Comparison of datasets and projects.</p></li>
+</ul>
+<p><strong>BUGS FIXED</strong></p>
+<ul class="simple">
+<li><p>Dtype parameter was not taken into account during initialisation of
+NDArrays.</p></li>
+<li><p>Math function behavior for coords.</p></li>
+<li><p>Color normalisation on the full range for colorscale.</p></li>
+<li><p>Configuration settings in the main application.</p></li>
+<li><p>Compatibility read_zip with py3.7.</p></li>
+<li><p>NDpanel temporary removed from the master.</p></li>
+<li><p>2D IRIS fixed.</p></li>
+<li><p>Trapz integration to return NDDataset.</p></li>
+<li><p>Suppressed a forgotten sleep statement that was slowing down the
+SpectroChemPy initialisation.</p></li>
+<li><p>Error in SIMPLISMA (changed affectations such as C.data[…] =
+something by C[…] = something.</p></li>
+<li><p>Cleaning mplstyle about non-style parameters and fix makestyle.</p></li>
+<li><p>Argument of set_xscale.</p></li>
+<li><p>Use read_topspin instead of the deprecated function read_bruker_nmr.</p></li>
+<li><p>Some issues with interactive baseline.</p></li>
+<li><p>Baseline and fitting tutorials.</p></li>
+<li><p>Removed dependency of isotopes.py to pandas.</p></li>
+</ul>
+</section>
+<section id="version-0-1-x">
+<h2>Version 0.1.x<a class="headerlink" href="#version-0-1-x" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Initial development versions.</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../api/api.html" class="btn btn-neutral float-left" title="API Configuration" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="index.html" class="btn btn-neutral float-right" title="API reference" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2014-2021 - A.Travert &amp; C.Fernandez @ LCS.
+      <span class="lastupdated">Last updated on Nov 12, 2021.
+      </span></p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

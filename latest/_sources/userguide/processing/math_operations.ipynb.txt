@@ -1,0 +1,1323 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "d8591d5f",
+   "metadata": {},
+   "source": [
+    "# Mathematical operations"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "429d1366",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from spectrochempy import *\n",
+    "import numpy as np"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "f1db364c",
+   "metadata": {},
+   "source": [
+    "## Ufuncs (Universal Numpy's functions)\n",
+    "A universal function (or `ufunc` in short) is a function that operates on numpy arrays in an element-by-element\n",
+    "fashion, supporting array broadcasting, type casting, and several other standard features. That is, a `ufunc` is a\n",
+    "“vectorized” wrapper for a function that takes a fixed number of specific inputs and produces a fixed number of\n",
+    "specific outputs.\n",
+    "\n",
+    "For instance, in numpy to calculate the square root of each element of a given nd-array, we can write something\n",
+    "like this using the `np.sqrt` functions :"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "a482b179",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "x = np.array([1.0, 2.0, 3.0, 4.0, 6.0])\n",
+    "np.sqrt(x)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "4376260c",
+   "metadata": {},
+   "source": [
+    "As seen above, `np.sqrt(x)` return a numpy array.\n",
+    "\n",
+    "The interesting thing, it that `ufunc`'s can also work with `NDDataset`."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "b85a156f",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "dx = NDDataset(x)\n",
+    "np.sqrt(dx)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "e524f6fa",
+   "metadata": {},
+   "source": [
+    "It is worth to note, that in spectrochempy, when can use internal equivalent of these `ufunc`'s.\n",
+    "\n",
+    "For instance, the square root can be calculated using the following syntax:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "a81839e1",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "sqrt(dx)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "696892f4",
+   "metadata": {},
+   "source": [
+    "## List of UFuncs working on `NDDataset`:\n",
+    "\n",
+    "### Functions affecting magnitudes of the number but keeping units\n",
+    "* [negative](#negative)(x, \\*\\*kwargs): Numerical negative, element-wise.\n",
+    "* [absolute](#abs)(x, \\*\\*kwargs): Calculate the absolute value, element-wise. Alias: [abs](#abs)\n",
+    "* [fabs](#abs)(x, \\*\\*kwargs): Calculate the absolute value, element-wise. Complex values are not handled,\n",
+    "use [absolute](#absolute) to find the absolute values of complex data.\n",
+    "* [conj](#)(x, \\*\\*kwargs): Return the complex conjugate, element-wise.\n",
+    "* [rint](#rint)(x, \\*\\*kwargs) :Round to the nearest integer, element-wise.\n",
+    "* [floor](#floor)(x, \\*\\*kwargs): Return the floor of the input, element-wise.\n",
+    "* [ceil](#ceil)(x, \\*\\*kwargs): Return the ceiling of the input, element-wise.\n",
+    "* [trunc](#trunc)(x, \\*\\*kwargs): Return the truncated value of the input, element-wise.\n",
+    "\n",
+    "### Functions affecting magnitudes of the number but also units\n",
+    "* [sqrt](#sqrt)(x, \\*\\*kwargs): Return the non-negative square-root of an array, element-wise.\n",
+    "* [square](#square)(x, \\*\\*kwargs): Return the element-wise square of the input.\n",
+    "* [cbrt](#cbrt)(x, \\*\\*kwargs): Return the cube-root of an array, element-wise.\n",
+    "* [reciprocal](#reciprocal)(x, \\*\\*kwargs): Return the reciprocal of the argument, element-wise.\n",
+    "\n",
+    "### Functions that require no units or dimensionless units for inputs. Returns dimensionless objects.\n",
+    "* [exp](#exp)(x, \\*\\*kwargs): Calculate the exponential of all elements in the input array.\n",
+    "* [exp2](#exp)(x, \\*\\*kwargs): Calculate 2\\*\\*p for all p in the input array.\n",
+    "* [expm1](#exp)(x, \\*\\*kwargs): Calculate `exp(x) - 1` for all elements in the array.\n",
+    "* [log](#log)(x, \\*\\*kwargs): Natural logarithm, element-wise.\n",
+    "* [log2](#log)(x, \\*\\*kwargs): Base-2 logarithm of x.\n",
+    "* [log10](#log)(x, \\*\\*kwargs): Return the base 10 logarithm of the input array, element-wise.\n",
+    "* [log1p](#log)(x, \\*\\*kwargs): Return `log(x + 1)`, element-wise.\n",
+    "\n",
+    "### Functions that return numpy arrays (*Work only for NDDataset*)\n",
+    "* [sign](#sign)(x): Returns an element-wise indication of the sign of a number.\n",
+    "* [logical_not](#logical_not)(x): Compute the truth value of NOT x element-wise.\n",
+    "* [isfinite](#isfinite)(x): Test element-wise for finiteness.\n",
+    "* [isinf](#isinf)(x): Test element-wise for positive or negative infinity.\n",
+    "* [isnan](#isnan)(x): Test element-wise for `NaN` and return result as a boolean array.\n",
+    "* [signbit](#signbit)(x): Returns element-wise `True` where signbit is set.\n",
+    "\n",
+    "### Trigonometric functions. Require unitless data or radian units.\n",
+    "* [sin](#sin)(x, \\*\\*kwargs): Trigonometric sine, element-wise.\n",
+    "* [cos](#cos)(x, \\*\\*kwargs): Trigonometric cosine element-wise.\n",
+    "* [tan](#tan)(x, \\*\\*kwargs): Compute tangent element-wise.\n",
+    "* [arcsin](#arcsin)(x, \\*\\*kwargs): Inverse sine, element-wise.\n",
+    "* [arccos](#arccos)(x, \\*\\*kwargs): Trigonometric inverse cosine, element-wise.\n",
+    "* [arctan](#arctan)(x, \\*\\*kwargs): Trigonometric inverse tangent, element-wise.\n",
+    "\n",
+    "### Hyperbolic functions\n",
+    "* [sinh](#sinh)(x, \\*\\*kwargs): Hyperbolic sine, element-wise.\n",
+    "* [cosh](#cosh)(x, \\*\\*kwargs): Hyperbolic cosine, element-wise.\n",
+    "* [tanh](#tanh)(x, \\*\\*kwargs): Compute hyperbolic tangent element-wise.\n",
+    "* [arcsinh](#arcsinh)(x, \\*\\*kwargs): Inverse hyperbolic sine element-wise.\n",
+    "* [arccosh](#arccosh)(x, \\*\\*kwargs): Inverse hyperbolic cosine, element-wise.\n",
+    "* [arctanh](#arctanh)(x, \\*\\*kwargs): Inverse hyperbolic tangent element-wise.\n",
+    "\n",
+    "### Unit conversions\n",
+    "* [deg2rad](#deg2rad)(x, \\*\\*kwargs): Convert angles from degrees to radians.\n",
+    "* [rad2deg](#rad2deg)(x, \\*\\*kwargs): Convert angles from radians to degrees.\n",
+    "\n",
+    "### Binary Ufuncs\n",
+    "\n",
+    "* [add](#add)(x1, x2, \\*\\*kwargs): Add arguments élement-wise.\n",
+    "* [subtract](#subtract)(x1, x2, \\*\\*kwargs): Subtract arguments, element-wise.\n",
+    "* [multiply](#multiply)(x1, x2, \\*\\*kwargs): Multiply arguments element-wise.\n",
+    "* [divide](#divide) or [true_divide](#true_divide)(x1, x2, \\*\\*kwargs): Returns a true division of the inputs,\n",
+    "element-wise.\n",
+    "* [floor_divide](#floor_divide)(x1, x2, \\*\\*kwargs): Return the largest integer smaller or equal to the division of\n",
+    "the inputs.\n",
+    "* [mod](#mod) or [remainder](#remainder)(x1, x2,\\*\\*kwargs): Return element-wise remainder of division.\n",
+    "* [fmod](#fmod)(x1, x2, \\*\\*kwargs): Return the element-wise remainder of division."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "c50b7ad2",
+   "metadata": {},
+   "source": [
+    "## Usage\n",
+    "To demonstrate the use of mathematical operations on spectrochempy object, we will first load an experimental 2D\n",
+    "dataset."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "e7cc7e6b",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "d2D = NDDataset.read_omnic(\"irdata/nh4y-activation.spg\")\n",
+    "prefs = d2D.preferences\n",
+    "prefs.colormap = \"magma\"\n",
+    "prefs.colorbar = False\n",
+    "prefs.figure.figsize = (6, 3)\n",
+    "_ = d2D.plot()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "5cfbee08",
+   "metadata": {},
+   "source": [
+    "Let's select only the first row of the 2D dataset ( the `squeeze` method is used to remove\n",
+    "the residual size 1 dimension). In addition we mask the saturated region."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "f310d276",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "dataset = d2D[0].squeeze()\n",
+    "_ = dataset.plot()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "04588304",
+   "metadata": {},
+   "source": [
+    "This dataset will be artificially modified already using some mathematical operation (subtraction with a scalar) to\n",
+    "present negative values and we will also mask some data"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "3dac5b85",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "dataset = dataset - 2.0  # add an offset to make that some of the values become negative\n",
+    "dataset[1290.0:890.0] = MASKED  # additionally we mask some data\n",
+    "_ = dataset.plot()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "0fdfa312",
+   "metadata": {},
+   "source": [
+    "### Unary functions"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "76fd0b12",
+   "metadata": {},
+   "source": [
+    "#### Functions affecting magnitudes of the number but keeping units"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "9799d6f5",
+   "metadata": {},
+   "source": [
+    "##### negative\n",
+    "Numerical negative, element-wise, keep units"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "9b328f2a",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "out = np.negative(dataset)  # the same results is obtained using out=-dataset\n",
+    "_ = out.plot(figsize=(6, 2.5), show_mask=True)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "c5111c18",
+   "metadata": {},
+   "source": [
+    "##### abs\n",
+    "##### absolute (alias of abs)\n",
+    "##### fabs (absolute for float arrays)\n",
+    "Numerical absolute value element-wise, element-wise, keep units"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "43d8e4b0",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "out = np.abs(dataset)\n",
+    "_ = out.plot(figsize=(6, 2.5))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "23959e71",
+   "metadata": {},
+   "source": [
+    "##### rint\n",
+    "Round elements of the array to the nearest integer, element-wise, keep units"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "65e95fef",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "out = np.rint(dataset)\n",
+    "_ = out.plot(figsize=(6, 2.5))  # not that title is not modified for this ufunc"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "ff1d0e24",
+   "metadata": {},
+   "source": [
+    "##### floor\n",
+    "Return the floor of the input, element-wise."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "f3af827e",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "out = np.floor(dataset)\n",
+    "_ = out.plot(figsize=(6, 2.5))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "b925b5ae",
+   "metadata": {},
+   "source": [
+    "##### ceil\n",
+    "Return the ceiling of the input, element-wise."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "4ed83013",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "out = np.ceil(dataset)\n",
+    "_ = out.plot(figsize=(6, 2.5))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "59f9dcf2",
+   "metadata": {},
+   "source": [
+    "##### trunc\n",
+    "Return the truncated value of the input, element-wise."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "872f41b9",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "out = np.trunc(dataset)\n",
+    "_ = out.plot(figsize=(6, 2.5))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "5612a3cf",
+   "metadata": {},
+   "source": [
+    "#### Functions affecting magnitudes of the number but also units\n",
+    "##### sqrt\n",
+    "Return the non-negative square-root of an array, element-wise."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "5338eddf",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "out = np.sqrt(\n",
+    "    dataset\n",
+    ")  # as they are some negative elements, return dataset has complex dtype.\n",
+    "_ = out.plot_1D(show_complex=True, figsize=(6, 2.5))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "c10f2a4c",
+   "metadata": {},
+   "source": [
+    "##### square\n",
+    "Return the element-wise square of the input."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "6cae98b6",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "out = np.square(dataset)\n",
+    "_ = out.plot(figsize=(6, 2.5))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "ad3cf586",
+   "metadata": {},
+   "source": [
+    "##### cbrt\n",
+    "Return the cube-root of an array, element-wise."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "c6d3ac99",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "out = np.cbrt(dataset)\n",
+    "_ = out.plot_1D(figsize=(6, 2.5))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "adca43e4",
+   "metadata": {},
+   "source": [
+    "##### reciprocal\n",
+    "Return the reciprocal of the argument, element-wise."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "b8fe3680",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "out = np.reciprocal(dataset + 3.0)\n",
+    "_ = out.plot(figsize=(6, 2.5))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "d15bcda0",
+   "metadata": {},
+   "source": [
+    "#### Functions that require no units or dimensionless units for inputs. Returns dimensionless objects."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "b8a83560",
+   "metadata": {},
+   "source": [
+    "##### exp\n",
+    "Exponential of all elements in the input array, element-wise"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "8a9c206e",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "out = np.exp(dataset)\n",
+    "_ = out.plot(figsize=(6, 2.5))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "d5ad5700",
+   "metadata": {},
+   "source": [
+    "Obviously numpy exponential functions applies only to dimensionless array. Else an error is generated."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "8658d9d8",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "x = NDDataset(np.arange(5), units=\"m\")\n",
+    "try:\n",
+    "    np.exp(x)  # A dimensionality error will be generated\n",
+    "except DimensionalityError as e:\n",
+    "    error_(e)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "7cd9ec7e",
+   "metadata": {},
+   "source": [
+    "##### exp2\n",
+    "Calculate 2\\*\\*p for all p in the input array."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "4b0dfe13",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "out = np.exp2(dataset)\n",
+    "_ = out.plot(figsize=(6, 2.5))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "3b2f83b6",
+   "metadata": {},
+   "source": [
+    "##### expm1\n",
+    "Calculate `exp(x) - 1` for all elements in the array."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "4bbffea2",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "out = np.expm1(dataset)\n",
+    "_ = out.plot(figsize=(6, 2.5))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "215bddcf",
+   "metadata": {},
+   "source": [
+    "##### log\n",
+    "Natural logarithm, element-wise.\n",
+    "\n",
+    "This doesn't generate un error for negative numbrs, but the output is masked for those values"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "00ff25d3",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "out = np.log(dataset)\n",
+    "ax = out.plot(figsize=(6, 2.5), show_mask=True)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "8696b12c",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "out = np.log(dataset - dataset.min())\n",
+    "_ = out.plot(figsize=(6, 2.5))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "aaebd3c8",
+   "metadata": {},
+   "source": [
+    "##### log2\n",
+    "Base-2 logarithm of x."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "35a37cb7",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "out = np.log2(dataset)\n",
+    "_ = out.plot(figsize=(6, 2.5))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "5badb472",
+   "metadata": {},
+   "source": [
+    "##### log10\n",
+    "Return the base 10 logarithm of the input array, element-wise."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "04e6515c",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "out = np.log10(dataset)\n",
+    "_ = out.plot(figsize=(6, 2.5))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "5a777d56",
+   "metadata": {},
+   "source": [
+    "##### log1p\n",
+    "Return `log(x + 1)`, element-wise."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "add4663e",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "out = np.log1p(dataset)\n",
+    "_ = out.plot(figsize=(6, 2.5))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "89e1ed65",
+   "metadata": {},
+   "source": [
+    "#### Functions that return numpy arrays (*Work only for NDDataset*)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "375e9740",
+   "metadata": {},
+   "source": [
+    "##### sign\n",
+    "Returns an element-wise indication of the sign of a number. Returned object is a ndarray"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "50bcb70f",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "np.sign(dataset)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "78950669",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "np.logical_not(dataset < 0)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "41ff9adb",
+   "metadata": {},
+   "source": [
+    "##### isfinite\n",
+    "Test element-wise for finiteness."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "1f9ee999",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "np.isfinite(dataset)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "db7c4f08",
+   "metadata": {},
+   "source": [
+    "##### isinf\n",
+    "Test element-wise for positive or negative infinity."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "9c39336b",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "np.isinf(dataset)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "f82f6540",
+   "metadata": {},
+   "source": [
+    "##### isnan\n",
+    "Test element-wise for `NaN` and return result as a boolean array."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "4485bd1e",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "np.isnan(dataset)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "f67918c7",
+   "metadata": {},
+   "source": [
+    "##### signbit\n",
+    "Returns element-wise `True` where signbit is set."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "7f716a9e",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "np.signbit(dataset)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "e10540c6",
+   "metadata": {},
+   "source": [
+    "#### Trigonometric functions. Require dimensionless/unitless  dataset or radians.\n",
+    "\n",
+    "In the below examples, unit of data in dataset is absorbance (then dimensionless)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "f20c70f8",
+   "metadata": {},
+   "source": [
+    "##### sin\n",
+    "Trigonometric sine, element-wise."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "d92921bd",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "out = np.sin(dataset)\n",
+    "_ = out.plot(figsize=(6, 2.5))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "d2585a81",
+   "metadata": {},
+   "source": [
+    "##### cos\n",
+    "Trigonometric cosine element-wise."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "665b858c",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "out = np.cos(dataset)\n",
+    "_ = out.plot(figsize=(6, 2.5))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "c237dfb1",
+   "metadata": {},
+   "source": [
+    "##### tan\n",
+    "Compute tangent element-wise."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "40d9adab",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "out = np.tan(dataset / np.max(dataset))\n",
+    "_ = out.plot(figsize=(6, 2.5))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "1824087d",
+   "metadata": {},
+   "source": [
+    "##### arcsin\n",
+    "Inverse sine, element-wise."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "d58bfcf2",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "out = np.arcsin(dataset)\n",
+    "_ = out.plot(figsize=(6, 2.5))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "c7a759b2",
+   "metadata": {},
+   "source": [
+    "##### arccos\n",
+    "Trigonometric inverse cosine, element-wise."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "9933fa3c",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "out = np.arccos(dataset)\n",
+    "_ = out.plot(figsize=(6, 2.5))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "8cd0af05",
+   "metadata": {},
+   "source": [
+    "##### arctan\n",
+    "Trigonometric inverse tangent, element-wise."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "77943f1b",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "out = np.arctan(dataset)\n",
+    "_ = out.plot(figsize=(6, 2.5))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "f1f5d77a",
+   "metadata": {},
+   "source": [
+    "#### Angle units conversion"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "8c53f569",
+   "metadata": {
+    "lines_to_next_cell": 2
+   },
+   "source": [
+    "##### rad2deg\n",
+    "Convert angles from radians to degrees (warning: unitless or dimensionless are assumed to be radians, so no error\n",
+    "will be issued)."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "c95e7976",
+   "metadata": {
+    "lines_to_next_cell": 2
+   },
+   "source": [
+    "for instance, if we take the z axis (the data magintude) in the figure above, it's expressed in radians. We can\n",
+    "change to degrees easily."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "6639941d",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "out = np.rad2deg(dataset)\n",
+    "out.title = \"data\"  # just to avoid a too long title\n",
+    "_ = out.plot(figsize=(6, 2.5))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "a2f889df",
+   "metadata": {
+    "lines_to_next_cell": 2
+   },
+   "source": [
+    "##### deg2rad\n",
+    "Convert angles from degrees to radians."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "1cb4b4cd",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "out = np.deg2rad(out)\n",
+    "out.title = \"data\"\n",
+    "_ = out.plot(figsize=(6, 2.5))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "a6a8ba5c",
+   "metadata": {},
+   "source": [
+    "#### Hyperbolic functions"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "e30541d3",
+   "metadata": {},
+   "source": [
+    "##### sinh\n",
+    "Hyperbolic sine, element-wise."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "82f03725",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "out = np.sinh(dataset)\n",
+    "_ = out.plot(figsize=(6, 2.5))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "772ad61c",
+   "metadata": {},
+   "source": [
+    "##### cosh\n",
+    "Hyperbolic cosine, element-wise."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "b75ce32a",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "out = np.cosh(dataset)\n",
+    "_ = out.plot(figsize=(6, 2.5))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "74957f89",
+   "metadata": {},
+   "source": [
+    "##### tanh\n",
+    "Compute hyperbolic tangent element-wise."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "0a678d34",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "out = np.tanh(dataset)\n",
+    "_ = out.plot(figsize=(6, 2.5))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "0fb6c657",
+   "metadata": {},
+   "source": [
+    "##### arcsinh\n",
+    "Inverse hyperbolic sine element-wise."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "8f715cac",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "out = np.arcsinh(dataset)\n",
+    "_ = out.plot(figsize=(6, 2.5))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "3518de18",
+   "metadata": {},
+   "source": [
+    "##### arccosh\n",
+    "Inverse hyperbolic cosine, element-wise."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "9a53655e",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "out = np.arccosh(dataset)\n",
+    "_ = out.plot(figsize=(6, 2.5))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "c20fce76",
+   "metadata": {},
+   "source": [
+    "##### arctanh\n",
+    "Inverse hyperbolic tangent element-wise."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "0f787a9b",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "out = np.arctanh(dataset)\n",
+    "_ = out.plot(figsize=(6, 2.5))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "b9a2f180",
+   "metadata": {},
+   "source": [
+    "### Binary functions"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "b66df864",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "dataset2 = np.reciprocal(dataset + 3)  # create a second dataset\n",
+    "dataset2[5000.0:4000.0] = MASKED\n",
+    "_ = dataset.plot(figsize=(6, 2.5))\n",
+    "_ = dataset2.plot(figsize=(6, 2.5))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "2a0a984c",
+   "metadata": {},
+   "source": [
+    "#### Arithmetics"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "ad849a0a",
+   "metadata": {},
+   "source": [
+    "##### add\n",
+    "Add arguments element-wise."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "22006a29",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "out = np.add(dataset, dataset2)\n",
+    "_ = out.plot(figsize=(6, 2.5))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "da61e1d4",
+   "metadata": {},
+   "source": [
+    "##### subtract\n",
+    "Subtract arguments, element-wise."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "8a3ed1dd",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "out = np.subtract(dataset, dataset2)\n",
+    "_ = out.plot(figsize=(6, 2.5))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "ad6331c0",
+   "metadata": {},
+   "source": [
+    "##### multiply\n",
+    "Multiply arguments element-wise."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "0ed31caa",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "out = np.multiply(dataset, dataset2)\n",
+    "_ = out.plot(figsize=(6, 2.5))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "5f5e154b",
+   "metadata": {},
+   "source": [
+    "##### divide\n",
+    "or\n",
+    "##### true_divide\n",
+    "Returns a true division of the inputs, element-wise."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "1ad238b3",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "out = np.divide(dataset, dataset2)\n",
+    "_ = out.plot(figsize=(6, 2.5))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "bd9e2e8b",
+   "metadata": {},
+   "source": [
+    "##### floor_divide\n",
+    "Return the largest integer smaller or equal to the division of the inputs."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "13265087",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "out = np.floor_divide(dataset, dataset2)\n",
+    "_ = out.plot(figsize=(6, 2.5))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "24aac5e7",
+   "metadata": {},
+   "source": [
+    "## Complex or hypercomplex NDDatasets\n",
+    "\n",
+    "\n",
+    "NDDataset objects with complex data are handled differently than in\n",
+    "`numpy.ndarray`.\n",
+    "\n",
+    "Instead, complex data are stored by interlacing the real and imaginary part.\n",
+    "This allows the definition of data that can be complex in several axis, and *e\n",
+    ".g.,* allows 2D-hypercomplex array that can be transposed (useful for NMR data)."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "1b5910b8",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "da = NDDataset(\n",
+    "    [\n",
+    "        [1.0 + 2.0j, 2.0 + 0j],\n",
+    "        [1.3 + 2.0j, 2.0 + 0.5j],\n",
+    "        [1.0 + 4.2j, 2.0 + 3j],\n",
+    "        [5.0 + 4.2j, 2.0 + 3j],\n",
+    "    ]\n",
+    ")\n",
+    "da"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "2611646b",
+   "metadata": {},
+   "source": [
+    "A dataset of type float can be transformed into a complex dataset (using two cionsecutive rows to create a complex\n",
+    "row)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "16baf612",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "da = NDDataset(np.arange(40).reshape(10, 4))\n",
+    "da"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "63a25429",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "dac = da.set_complex()\n",
+    "dac"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "aa464b5f",
+   "metadata": {},
+   "source": [
+    "Note the `x`dimension size is divided by a factor of two"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "4a54c9b5",
+   "metadata": {},
+   "source": [
+    "A dataset which is complex in two dimensions is called hypercomplex (it's datatype in SpectroChemPy is set to\n",
+    "quaternion)."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "5511ab66",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "daq = da.set_quaternion()  # equivalently one can use the set_hypercomplex method\n",
+    "daq"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "7aa3931a",
+   "metadata": {
+    "pycharm": {
+     "name": "#%%\n"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "daq.dtype"
+   ]
+  }
+ ],
+ "metadata": {
+  "jupytext": {
+   "encoding": "# -*- coding: utf-8 -*-",
+   "formats": "ipynb,py:percent",
+   "notebook_metadata_filter": "all"
+  },
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}

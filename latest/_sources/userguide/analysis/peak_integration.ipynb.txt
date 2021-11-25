@@ -1,0 +1,220 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "ea82b5b2",
+   "metadata": {},
+   "source": [
+    "# Peak integration\n",
+    "\n",
+    "This tutorial shows how to find peak maxima and determine peak areas with spectrochempy. As prerequisite,\n",
+    "the user is expected to have read the [Import](../IO/import.ipynb), [Import IR](../IO/importIR.ipynb),\n",
+    "[slicing](../processing/slicing.ipynb) and [baseline correction](../processing/baseline_correct.ipynb) tutorials."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "86d30fb5",
+   "metadata": {},
+   "source": [
+    "First lets import the SpectroChemPy API"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "8b547b11",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import spectrochempy as scp"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "c86fc86f",
+   "metadata": {},
+   "source": [
+    "Now import some 2D data into a NDDataset object"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "81525261",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "ds = scp.read_omnic(\"irdata/nh4y-activation.spg\")\n",
+    "ds"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "27f6215f",
+   "metadata": {},
+   "source": [
+    "It's a series of 55 spectra.\n",
+    "\n",
+    "For the demonstration select only the first 20 on a limited region from 1250 to 1800 cm$^{-1}$ (Do not forget to\n",
+    "use floating numbers for slicing)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "84f45e59",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "X = ds[:20, 1250.0:1800.0]"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "76f7bb36",
+   "metadata": {},
+   "source": [
+    "We can also eventually remove offset on the acquisition time dimension (y)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "10257fcc",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "X.y -= X.y[0]\n",
+    "X.y.ito(\"min\")\n",
+    "X.y.title = \"acquisition time\""
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "6cd0ee37",
+   "metadata": {},
+   "source": [
+    "We set some plotting preferences and then plot the raw data"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "63d7ae58",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "prefs = X.preferences\n",
+    "prefs.figure.figsize = (6, 3)\n",
+    "prefs.colormap = \"Dark2\"\n",
+    "prefs.colorbar = True\n",
+    "X.plot()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "9c0e1905",
+   "metadata": {},
+   "source": [
+    "Now we can perform some baseline correction"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "a523da97",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "blc = scp.BaselineCorrection(X)\n",
+    "regions = (\n",
+    "    [1740.0, 1800.0],\n",
+    "    [1550.0, 1570.0],\n",
+    "    [1250.0, 1300.0],\n",
+    ")  # define 3 regions where we want the baseline to reach zero.\n",
+    "Xcorr = blc.compute(*regions)  # compute the corrected NDDataset\n",
+    "\n",
+    "Xcorr.plot()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "a36fa164",
+   "metadata": {},
+   "source": [
+    "To integrate each row on the full range, we can use the sum or trapz method of a NDDataset."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "b401936d",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "inttrapz = Xcorr.trapz(dim=\"x\")\n",
+    "intsimps = Xcorr.simps(dim=\"x\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "da356be1",
+   "metadata": {},
+   "source": [
+    "As you can see both method give almost the same results in this case"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "a772996e",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "scp.plot_multiple(\n",
+    "    method=\"scatter\",\n",
+    "    ms=5,\n",
+    "    datasets=[inttrapz, intsimps],\n",
+    "    labels=[\"trapzoidal rule\", \"simpson' rule\"],\n",
+    "    legend=\"best\",\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "1a4d783c",
+   "metadata": {},
+   "source": [
+    "The difference between the trapezoidal and simpson integration methods is visualized below. In this case they are\n",
+    "extremly close."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "5f84e175",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "diff = (inttrapz - intsimps) * 100.0 / intsimps\n",
+    "diff.title = \"difference\"\n",
+    "diff.units = \"percent\"\n",
+    "diff.plot(scatter=True, ms=5)"
+   ]
+  }
+ ],
+ "metadata": {
+  "jupytext": {
+   "formats": "ipynb,py:percent",
+   "notebook_metadata_filter": "all"
+  },
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}

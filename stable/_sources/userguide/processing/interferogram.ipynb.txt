@@ -1,0 +1,221 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "c3849274",
+   "metadata": {},
+   "source": [
+    "# FTIR interferogram processing\n",
+    "\n",
+    "A situation where we need transform of real data is the case of FTIR interferograms."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "4dd9f298",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import spectrochempy as scp\n",
+    "from spectrochempy.units import ur"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "531e39a8",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "ir = scp.read_spa(\"irdata/interferogram/interfero.SPA\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "3ba635eb",
+   "metadata": {},
+   "source": [
+    "By default, the interferogram is displayed with an axis in points (no units)."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "0d15b4f5",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "prefs = ir.preferences\n",
+    "prefs.figure.figsize = (7, 3)\n",
+    "_ = ir.plot()\n",
+    "print(\"number of points = \", ir.size)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "c34380a8",
+   "metadata": {},
+   "source": [
+    "Plotting a zoomed region around the maximum of the interferogram (the so-called `ZPD`: `Zero optical Path\n",
+    "Difference` ) we can see that it is located around the 64th points. The FFT processing will need this information,\n",
+    "but it will be determined automatically."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "13f1716b",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "_ = ir.plot(xlim=(0, 128))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "10e2d8de",
+   "metadata": {},
+   "source": [
+    "The `x` scale of the interferogramme can also be displayed as a function of optical path difference. For this we\n",
+    "just make `show_datapoints` to False:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "55703613",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "ir.x.show_datapoints = False\n",
+    "_ = ir.plot(xlim=(-0.04, 0.04))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "372f59ad",
+   "metadata": {},
+   "source": [
+    "Note that the `x` scale of the interferogram has been calculated using a laser frequency of 15798.26 cm$^{-1}$. If\n",
+    "this is not correct you can change it using the `set_laser_frequency` coordinate method:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "09c67163",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "ir.x.set_laser_frequency(15798.26 * ur(\"cm^-1\"))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "f346a9cf",
+   "metadata": {},
+   "source": [
+    "Now we can perform the Fourier transform. By default no zero-filling level is applied prior the Fourier transform\n",
+    "for FTIR. To add some level of zero-filling, use the `zf` method."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "7b625794",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "ird = ir.dc()\n",
+    "ird = ird.zf(size=2 * ird.size)\n",
+    "irt = ird.fft()\n",
+    "\n",
+    "_ = irt.plot(xlim=(3999, 400))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "ad51043e",
+   "metadata": {},
+   "source": [
+    "A `Happ-Genzel` (Hamming window) apodization can also applied prior to the\n",
+    "Fourier transformation in order to decrease the H2O narrow bands."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "3cd3a60c",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "ird = ir.dc()\n",
+    "irdh = ird.hamming()\n",
+    "irdh.zf(inplace=True, size=2 * ird.size)\n",
+    "irth = irdh.fft()\n",
+    "_ = irth.plot(xlim=(3999, 400))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "91b495a9",
+   "metadata": {},
+   "source": [
+    "## Comparison with the OMNIC processing.\n",
+    "\n",
+    "Here we compare the OMNIC processed spectra of the same interferogram and ours in red. One can see that the results\n",
+    "are very close"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "316d9d96",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "irs = scp.read_spa(\"irdata/interferogram/spectre.SPA\")\n",
+    "prefs.figure.figsize = (7, 6)\n",
+    "_ = irs.plot(label=\"omnic\")\n",
+    "_ = (irt - 0.4).plot(c=\"red\", clear=False, xlim=(3999, 400), label=\"no hamming\")\n",
+    "ax = (irth - 0.2).plot(c=\"green\", clear=False, xlim=(3999, 400), label=\"hamming\")\n",
+    "_ = ax.legend()"
+   ]
+  }
+ ],
+ "metadata": {
+  "jupytext": {
+   "cell_metadata_filter": "title,-all",
+   "encoding": "# -*- coding: utf-8 -*-",
+   "formats": "ipynb,py:percent",
+   "notebook_metadata_filter": "all"
+  },
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.9.1"
+  },
+  "widgets": {
+   "application/vnd.jupyter.widget-state+json": {
+    "state": {},
+    "version_major": 2,
+    "version_minor": 0
+   }
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}

@@ -1,0 +1,13 @@
+
+spectrochempy.Script.implements
+===============================
+
+.. currentmodule:: spectrochempy
+
+.. automethod:: Script.implements
+
+.. include:: /gettingstarted/gallery/backreferences/spectrochempy.Script.implements.examples
+
+.. raw:: html
+
+   <div style='clear:both'></div>

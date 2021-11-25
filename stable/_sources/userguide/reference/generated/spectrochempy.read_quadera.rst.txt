@@ -1,0 +1,13 @@
+
+spectrochempy.read\_quadera
+===========================
+
+.. currentmodule:: spectrochempy
+
+.. autofunction:: read_quadera
+
+.. include:: /gettingstarted/gallery/backreferences/spectrochempy.read_quadera.examples
+
+.. raw:: html
+
+   <div style='clear:both'></div>

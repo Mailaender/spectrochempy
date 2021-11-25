@@ -1,0 +1,476 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "bdd0a7d4",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   },
+   "source": [
+    "# Introduction\n",
+    "\n",
+    "The **SpectroChemPy** project was developed to provide advanced tools for processing and\n",
+    "analyzing spectroscopic data, initially for internal purposes in the\n",
+    "[LCS (https://www.lcs.ensicaen.fr)](https://www.lcs.ensicaen.fr).\n",
+    "\n",
+    "**SpectroChemPy** is essentially a library written in python language and which proposes objects (`NDDataset`, and\n",
+    "`Project`) to contain data, equipped with methods to analyze, transform or display\n",
+    "this data in a simple way by the user.\n",
+    "\n",
+    " The processed data are mainly spectroscopic data from techniques such as IR, Raman or NMR, but they are not limited\n",
+    "to this type of application, as any type of numerical data arranged in tabular form can generally serve as the main\n",
+    "input."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "5a072556",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   },
+   "source": [
+    "## How to get started\n",
+    "\n",
+    "<div class='alert alert-info'>\n",
+    "<b>Note</b>\n",
+    "\n",
+    "We assume that the SpectroChemPy package has been correctly\n",
+    "installed. if is not the case, please go to [SpectroChemPy installation\n",
+    "procedure](../../gettingstarted/install/index.rst).\n",
+    "</div>"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "b524449c",
+   "metadata": {
+    "nbsphinx-toctree": {
+     "maxdepth": 3
+    },
+    "slideshow": {
+     "slide_type": "subslide"
+    }
+   },
+   "source": [
+    "[interface](interface.ipynb)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "e46d8a83",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   },
+   "source": [
+    "## Loading the API\n",
+    "\n",
+    "Before using SpectroChemPy, we need to load the **API (Application Programming Interface)**: it exposes many\n",
+    "objects and functions.\n",
+    "\n",
+    "To load the API, you must import it using one of the following syntax.\n",
+    "\n",
+    "In the first syntax we load the library into a namespace called `scp` (we recommend this name, but you can choose whatever\n",
+    "you want - except something already in use):"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "cdb8c812",
+   "metadata": {
+    "lines_to_next_cell": 2
+   },
+   "outputs": [],
+   "source": [
+    "import spectrochempy as scp  # SYNTAX 1\n",
+    "\n",
+    "nd = scp.NDDataset()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "b6b66f92",
+   "metadata": {},
+   "source": [
+    "or in the second syntax, with a wild `*` import."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "f0cb7deb",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from spectrochempy import *  # SYNTAX 2\n",
+    "\n",
+    "nd = NDDataset()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "fc679a97",
+   "metadata": {},
+   "source": [
+    "With the second syntax, as often in python, the access to objects/functions can be greatly simplified. For example,\n",
+    "we can use directly `NDDataset` without a prefix instead of `scp.NDDataset` which is the first syntax) but there is always a\n",
+    "risk of overwriting some variables or functions already present in the namespace.\n",
+    "Therefore, the first syntax is generally highly recommended.\n",
+    "\n",
+    "Alternatively, you can also load only the objects and function required by your application:\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "2e084306",
+   "metadata": {
+    "lines_to_next_cell": 2
+   },
+   "outputs": [],
+   "source": [
+    "from spectrochempy import NDDataset  # SYNTAX 3\n",
+    "\n",
+    "nd = NDDataset()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "79c2ce6a",
+   "metadata": {},
+   "source": [
+    "## NDDataset, the main object"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "814b8e28",
+   "metadata": {},
+   "source": [
+    "NDDataset is a python object, actually a container, which can represent most of your multidimensional spectroscopic\n",
+    "data.\n",
+    "\n",
+    "For instance, in the following we read data from a series of FTIR experiments, provided  by the OMNIC software:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "289faa81",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import os\n",
+    "\n",
+    "nd = NDDataset.read_omnic(os.path.join(\"irdata\", \"nh4y-activation.spg\"))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "70a166e2",
+   "metadata": {},
+   "source": [
+    "Note that for this example, we use data stored in a ``test`` directory. For your own usage, you probably have to\n",
+    "give the full pathname (see ... for the way to overcome this using `preferences` setting)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "ea8b5808",
+   "metadata": {},
+   "source": [
+    "### Display dataset information"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "a66584dc",
+   "metadata": {},
+   "source": [
+    "Several ways are available to display the data we have jsut read and that are now stored in the dataset\n",
+    "\n",
+    "* **Printing** them, using the print function of python to get a short text version of the dataset information."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "a5111a2e",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "print(nd)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "155a910a",
+   "metadata": {},
+   "source": [
+    "A much Longer (and colored) information text can be obtained using the spectrochempy provided ``print_`` function."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "4ee230e8",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "scp.print_(nd)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "f9bc8e4e",
+   "metadata": {},
+   "source": [
+    "* **Displaying html**, inside a jupyter notebook, by just typing the name of the dataset (must be the last\n",
+    "instruction of a cell, however!)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "935244ca",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "nd"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "f8970408",
+   "metadata": {},
+   "source": [
+    "### Plotting a dataset\n",
+    "\n",
+    "First, we can set some general plotting preferences for this dataset"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "e56ad58a",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "prefs = nd.preferences\n",
+    "prefs.reset()\n",
+    "prefs.figure.figsize = (6, 3)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "94334415",
+   "metadata": {},
+   "source": [
+    "Let's plot first a 1D spectrum (for instance one row of nd)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "6f22a75d",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "row = nd[-1]\n",
+    "_ = row.plot()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "211023d7",
+   "metadata": {},
+   "source": [
+    "or a column ..."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "bc243c22",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "col = nd[:, 3500.0]  # note the indexing using wavenumber!\n",
+    "_ = col.plot_scatter()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "73b58fc8",
+   "metadata": {},
+   "source": [
+    "2D plots can be also generated as stacked plot"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "3c0841ed",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "_ = nd.plot(method=\"stack\")  # or nd.plot_stack()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "6c4cff54",
+   "metadata": {},
+   "source": [
+    "or as an image plot:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "7ebed80b",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "prefs.colormap = \"magma\"\n",
+    "_ = nd.plot(method=\"image\")  # or nd.plot_image()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "ac2a6c82",
+   "metadata": {},
+   "source": [
+    "Note that as we plot wavenumbers as abcissa, by convention the coordinates direction is reversed.\n",
+    "\n",
+    "This can be changed by using the keyword argument `reversed = False`."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "43a972ff",
+   "metadata": {},
+   "source": [
+    "### Processing a dataset"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "ebee89a8",
+   "metadata": {},
+   "source": [
+    "Some arithmetic can be performed on such dataset. Here is an example where we subtract one reference spectrum to\n",
+    "the whole nddataset that we have read above (`nd`)."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "9212b9e4",
+   "metadata": {},
+   "source": [
+    "Lets take, e.g., the last row as reference"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "16f999bb",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "ref = nd[0]\n",
+    "_ = ref.plot()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "9875d270",
+   "metadata": {},
+   "source": [
+    "Now suppress this ref spectrum to all other spectra of the whole dataset (additionally we mask the region of\n",
+    "saturation"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "86edca53",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "prefs.colormap = \"jet\"\n",
+    "prefs.colorbar = True\n",
+    "nds = nd - ref\n",
+    "nds[:, 1290.0:890.0] = scp.MASKED\n",
+    "_ = nds.plot_stack()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "a9d74ba1",
+   "metadata": {},
+   "source": [
+    "More details on available on available processing and analysis function will be given later in this user guide."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "cda5280f",
+   "metadata": {},
+   "source": [
+    "This was a short overview of the possibilities. To go further you can **Continue with ...**"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "c09b146d",
+   "metadata": {
+    "nbsphinx-toctree": {
+     "maxdepth": 3
+    }
+   },
+   "source": [
+    "[Data structures](../objects.rst)"
+   ]
+  }
+ ],
+ "metadata": {
+  "jupytext": {
+   "cell_metadata_json": true,
+   "formats": "ipynb,py:percent",
+   "notebook_metadata_filter": "all"
+  },
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.9.1"
+  },
+  "widgets": {
+   "application/vnd.jupyter.widget-state+json": {
+    "state": {},
+    "version_major": 2,
+    "version_minor": 0
+   }
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}

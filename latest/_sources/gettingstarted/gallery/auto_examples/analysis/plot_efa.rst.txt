@@ -1,0 +1,191 @@
+.. only:: html
+
+    .. note::
+        :class: sphx-glr-download-link-note
+
+        Click :ref:`here <sphx_glr_download_gettingstarted_gallery_auto_examples_analysis_plot_efa.py>`     to download the full example code
+    .. rst-class:: sphx-glr-example-title
+
+    .. _sphx_glr_gettingstarted_gallery_auto_examples_analysis_plot_efa.py:
+
+
+EFA analysis example
+======================
+
+In this example, we perform the Evolving Factor Analysis
+
+sphinx_gallery_thumbnail_number = 2
+
+
+.. code-block:: default
+
+
+    import spectrochempy as scp
+    import os
+
+
+
+
+
+
+
+
+Upload and preprocess a dataset
+
+
+.. code-block:: default
+
+
+    datadir = scp.preferences.datadir
+    dataset = scp.read_omnic(os.path.join(datadir, "irdata", "nh4y-activation.spg"))
+
+
+
+
+
+
+
+
+columns masking
+
+
+.. code-block:: default
+
+
+    dataset[:, 1230.0:920.0] = scp.MASKED  # do not forget to use float in slicing
+    dataset[:, 5997.0:5993.0] = scp.MASKED
+
+
+
+
+
+
+
+
+difference spectra
+
+
+.. code-block:: default
+
+
+    dataset -= dataset[-1]
+    dataset.plot_stack()
+
+
+
+
+.. image:: /gettingstarted/gallery/auto_examples/analysis/images/sphx_glr_plot_efa_001.png
+    :alt: plot efa
+    :class: sphx-glr-single-img
+
+
+.. rst-class:: sphx-glr-script-out
+
+ Out:
+
+ .. code-block:: none
+
+
+    <AxesSubplot:xlabel='wavenumbers $\\mathrm{/\\ \\mathrm{cm}^{-1}}$', ylabel='absorbance $\\mathrm{/\\ \\mathrm{a.u.}}$'>
+
+
+
+column masking for bad columns
+
+
+.. code-block:: default
+
+
+    dataset[10:12] = scp.MASKED
+
+
+
+
+
+
+
+
+Evolving Factor Analysis
+
+
+.. code-block:: default
+
+
+    efa = scp.EFA(dataset)
+
+
+
+
+
+.. rst-class:: sphx-glr-script-out
+
+ Out:
+
+ .. code-block:: none
+
+    Evolving Factor Analysis: 0%     Evolving Factor Analysis: 0%     Evolving Factor Analysis: 1%     Evolving Factor Analysis: 2%     Evolving Factor Analysis: 3%     Evolving Factor Analysis: 4%     Evolving Factor Analysis: 5%     Evolving Factor Analysis: 6%     Evolving Factor Analysis: 7%     Evolving Factor Analysis: 8%     Evolving Factor Analysis: 9%     Evolving Factor Analysis: 10%     Evolving Factor Analysis: 10%     Evolving Factor Analysis: 11%     Evolving Factor Analysis: 12%     Evolving Factor Analysis: 13%     Evolving Factor Analysis: 14%     Evolving Factor Analysis: 15%     Evolving Factor Analysis: 16%     Evolving Factor Analysis: 17%     Evolving Factor Analysis: 18%     Evolving Factor Analysis: 19%     Evolving Factor Analysis: 20%     Evolving Factor Analysis: 20%     Evolving Factor Analysis: 21%     Evolving Factor Analysis: 22%     Evolving Factor Analysis: 23%     Evolving Factor Analysis: 24%     Evolving Factor Analysis: 25%     Evolving Factor Analysis: 26%     Evolving Factor Analysis: 27%     Evolving Factor Analysis: 28%     Evolving Factor Analysis: 29%     Evolving Factor Analysis: 30%     Evolving Factor Analysis: 30%     Evolving Factor Analysis: 31%     Evolving Factor Analysis: 32%     Evolving Factor Analysis: 33%     Evolving Factor Analysis: 34%     Evolving Factor Analysis: 35%     Evolving Factor Analysis: 36%     Evolving Factor Analysis: 37%     Evolving Factor Analysis: 38%     Evolving Factor Analysis: 39%     Evolving Factor Analysis: 40%     Evolving Factor Analysis: 40%     Evolving Factor Analysis: 41%     Evolving Factor Analysis: 42%     Evolving Factor Analysis: 43%     Evolving Factor Analysis: 44%     Evolving Factor Analysis: 45%     Evolving Factor Analysis: 46%     Evolving Factor Analysis: 47%     Evolving Factor Analysis: 48%     Evolving Factor Analysis: 49%     Evolving Factor Analysis: 50 %     Evolving Factor Analysis: 51 %     Evolving Factor Analysis: 52 %     Evolving Factor Analysis: 53 %     Evolving Factor Analysis: 54 %     Evolving Factor Analysis: 55 %     Evolving Factor Analysis: 56 %     Evolving Factor Analysis: 57 %     Evolving Factor Analysis: 58 %     Evolving Factor Analysis: 59 %     Evolving Factor Analysis: 60 %     Evolving Factor Analysis: 60 %     Evolving Factor Analysis: 61 %     Evolving Factor Analysis: 62 %     Evolving Factor Analysis: 63 %     Evolving Factor Analysis: 64 %     Evolving Factor Analysis: 65 %     Evolving Factor Analysis: 66 %     Evolving Factor Analysis: 67 %     Evolving Factor Analysis: 68 %     Evolving Factor Analysis: 69 %     Evolving Factor Analysis: 70 %     Evolving Factor Analysis: 70 %     Evolving Factor Analysis: 71 %     Evolving Factor Analysis: 72 %     Evolving Factor Analysis: 73 %     Evolving Factor Analysis: 74 %     Evolving Factor Analysis: 75 %     Evolving Factor Analysis: 76 %     Evolving Factor Analysis: 77 %     Evolving Factor Analysis: 78 %     Evolving Factor Analysis: 79 %     Evolving Factor Analysis: 80 %     Evolving Factor Analysis: 80 %     Evolving Factor Analysis: 81 %     Evolving Factor Analysis: 82 %     Evolving Factor Analysis: 83 %     Evolving Factor Analysis: 84 %     Evolving Factor Analysis: 85 %     Evolving Factor Analysis: 86 %     Evolving Factor Analysis: 87 %     Evolving Factor Analysis: 88 %     Evolving Factor Analysis: 89 %     Evolving Factor Analysis: 90 %     Evolving Factor Analysis: 90 %     Evolving Factor Analysis: 91 %     Evolving Factor Analysis: 92 %     Evolving Factor Analysis: 93 %     Evolving Factor Analysis: 94 %     Evolving Factor Analysis: 95 %     Evolving Factor Analysis: 96 %     Evolving Factor Analysis: 97 %     Evolving Factor Analysis: 98 %     Evolving Factor Analysis: 99 %     Evolving Factor Analysis: 100 % 
+
+
+
+Show results
+
+
+
+.. code-block:: default
+
+    npc = 4
+    c = efa.get_conc(npc)
+    c.T.plot()
+
+    # scp.show()  # Uncomment to show plot if needed (not necessary in jupyter notebook)
+
+
+
+.. image:: /gettingstarted/gallery/auto_examples/analysis/images/sphx_glr_plot_efa_002.png
+    :alt: plot efa
+    :class: sphx-glr-single-img
+
+
+.. rst-class:: sphx-glr-script-out
+
+ Out:
+
+ .. code-block:: none
+
+
+    <AxesSubplot:xlabel='acquisition timestamp (GMT) $\\mathrm{/\\ \\mathrm{s}}$', ylabel='relative concentration $\\mathrm{}$'>
+
+
+
+
+.. rst-class:: sphx-glr-timing
+
+   **Total running time of the script:** ( 0 minutes  3.272 seconds)
+
+
+.. _sphx_glr_download_gettingstarted_gallery_auto_examples_analysis_plot_efa.py:
+
+
+.. only :: html
+
+ .. container:: sphx-glr-footer
+    :class: sphx-glr-footer-example
+
+
+
+  .. container:: sphx-glr-download sphx-glr-download-python
+
+     :download:`Download Python source code: plot_efa.py <plot_efa.py>`
+
+
+
+  .. container:: sphx-glr-download sphx-glr-download-jupyter
+
+     :download:`Download Jupyter notebook: plot_efa.ipynb <plot_efa.ipynb>`
+
+
+.. only:: html
+
+ .. rst-class:: sphx-glr-signature
+
+    `Gallery generated by Sphinx-Gallery <https://sphinx-gallery.github.io>`_

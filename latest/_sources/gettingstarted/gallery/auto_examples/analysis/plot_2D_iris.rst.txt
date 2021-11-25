@@ -1,0 +1,433 @@
+.. only:: html
+
+    .. note::
+        :class: sphx-glr-download-link-note
+
+        Click :ref:`here <sphx_glr_download_gettingstarted_gallery_auto_examples_analysis_plot_2D_iris.py>`     to download the full example code
+    .. rst-class:: sphx-glr-example-title
+
+    .. _sphx_glr_gettingstarted_gallery_auto_examples_analysis_plot_2D_iris.py:
+
+
+2D-IRIS analysis example
+=========================
+
+In this example, we perform the 2D IRIS analysis of CO adsorption on a sulfide catalyst.
+
+
+.. code-block:: default
+
+
+    import spectrochempy as scp
+
+
+
+
+
+
+
+
+## Uploading dataset
+
+
+.. code-block:: default
+
+
+    X = scp.read("irdata/CO@Mo_Al2O3.SPG")
+
+
+
+
+
+
+
+
+``X`` has two coordinates:
+* `wavenumbers` named "x"
+* and `timestamps` (*i.e.,* the time of recording) named "y".
+
+
+.. code-block:: default
+
+    print(X.coordset)
+
+
+
+
+
+.. rst-class:: sphx-glr-script-out
+
+ Out:
+
+ .. code-block:: none
+
+    CoordSet: [x:wavenumbers, y:acquisition timestamp (GMT)]
+
+
+
+
+## Setting new coordinates
+
+The ``y`` coordinates of the dataset is the acquisition timestamp. However, each spectra has been recorded
+with a given pressure of CO in the intrared cell.
+
+Hence it would be interesting to add pressure coordinates to the ``y`` dimension:
+
+
+.. code-block:: default
+
+
+    pressures = [
+        0.00300,
+        0.00400,
+        0.00900,
+        0.01400,
+        0.02100,
+        0.02600,
+        0.03600,
+        0.05100,
+        0.09300,
+        0.15000,
+        0.20300,
+        0.30000,
+        0.40400,
+        0.50300,
+        0.60200,
+        0.70200,
+        0.80100,
+        0.90500,
+        1.00400,
+    ]
+
+    c_pressures = scp.Coord(pressures, title="pressure", units="torr")
+
+
+
+
+
+
+
+
+Now we can set multiple coordinates:
+
+
+.. code-block:: default
+
+
+    c_times = X.y.copy()  # the original coordinate
+    X.y = [c_times, c_pressures]
+    print(X.y)
+
+
+
+
+
+.. rst-class:: sphx-glr-script-out
+
+ Out:
+
+ .. code-block:: none
+
+    CoordSet: [_1:acquisition timestamp (GMT), _2:pressure]
+
+
+
+
+By default, the current coordinate is the first one (here `c_times`). For example, it will be used by default for
+plotting:
+
+
+.. code-block:: default
+
+
+    prefs = X.preferences
+    prefs.figure.figsize = (7, 3)
+    _ = X.plot(colorbar=True)
+    _ = X.plot_map(colorbar=True)
+
+
+
+
+.. rst-class:: sphx-glr-horizontal
+
+
+    *
+
+      .. image:: /gettingstarted/gallery/auto_examples/analysis/images/sphx_glr_plot_2D_iris_001.png
+          :alt: plot 2D iris
+          :class: sphx-glr-multi-img
+
+    *
+
+      .. image:: /gettingstarted/gallery/auto_examples/analysis/images/sphx_glr_plot_2D_iris_002.png
+          :alt: plot 2D iris
+          :class: sphx-glr-multi-img
+
+
+
+
+
+To seamlessly work with the second coordinates (pressures), we can change the default coordinate:
+
+
+.. code-block:: default
+
+
+    X.y.select(2)  # to select coordinate ``_2``
+    X.y.default
+
+
+
+
+
+
+.. only:: builder_html
+
+    .. raw:: html
+
+        <table style='background:transparent'>
+        <tr><td style='padding-right:5px; padding-bottom:0px; padding-top:0px; width:124px'><font color='green'>         size</font> </td><td style='text-align:left; padding-bottom:0px; padding-top:0px; border:.5px solid lightgray;  '> 19</td><tr>
+        <tr><td style='padding-right:5px; padding-bottom:0px; padding-top:0px; width:124px'><font color='green'>        title</font> </td><td style='text-align:left; padding-bottom:0px; padding-top:0px; border:.5px solid lightgray;  '> pressure</td><tr>
+        <tr><td style='padding-right:5px; padding-bottom:0px; padding-top:0px; width:124px'><font color='green'>  coordinates</font> </td><td style='text-align:left; padding-bottom:0px; padding-top:0px; border:.5px solid lightgray;  '> <div><font color='blue'>[   0.003    0.004 ...    0.905    1.004] torr</font></div></td><tr>
+        </table>
+        <br />
+        <br />
+
+Let's now plot the spectral range of interest. The default coordinate is now used:
+
+
+.. code-block:: default
+
+    X_ = X[:, 2250.0:1950.0]
+    print(X_.y.default)
+    _ = X_.plot()
+    _ = X_.plot_map()
+
+
+
+
+.. rst-class:: sphx-glr-horizontal
+
+
+    *
+
+      .. image:: /gettingstarted/gallery/auto_examples/analysis/images/sphx_glr_plot_2D_iris_003.png
+          :alt: plot 2D iris
+          :class: sphx-glr-multi-img
+
+    *
+
+      .. image:: /gettingstarted/gallery/auto_examples/analysis/images/sphx_glr_plot_2D_iris_004.png
+          :alt: plot 2D iris
+          :class: sphx-glr-multi-img
+
+
+.. rst-class:: sphx-glr-script-out
+
+ Out:
+
+ .. code-block:: none
+
+    Coord: [float64] torr (size: 19)
+
+
+
+
+## IRIS analysis without regularization
+
+Perform IRIS without regularization (the loglevel can be set to `INFO` to have information on the running process)
+
+
+.. code-block:: default
+
+    scp.set_loglevel(scp.INFO)
+    param = {"epsRange": [-8, -1, 50], "kernel": "langmuir"}
+    iris = scp.IRIS(X_, param)
+
+
+
+
+
+
+
+
+Plots the results
+
+
+.. code-block:: default
+
+    iris.plotdistribution()
+    _ = iris.plotmerit()
+
+
+
+
+.. rst-class:: sphx-glr-horizontal
+
+
+    *
+
+      .. image:: /gettingstarted/gallery/auto_examples/analysis/images/sphx_glr_plot_2D_iris_005.png
+          :alt: plot 2D iris
+          :class: sphx-glr-multi-img
+
+    *
+
+      .. image:: /gettingstarted/gallery/auto_examples/analysis/images/sphx_glr_plot_2D_iris_006.png
+          :alt: 2D IRIS merit plot, $\lambda$ = 0.00e+00
+          :class: sphx-glr-multi-img
+
+
+
+
+
+## With regularization and a manual seach
+
+Perform  IRIS with regularization, manual search
+
+
+.. code-block:: default
+
+    param = {"epsRange": [-8, -1, 50], "lambdaRange": [-10, 1, 12], "kernel": "langmuir"}
+
+
+    iris = scp.IRIS(X_, param)
+    iris.plotlcurve(title="L curve, manual search")
+    iris.plotdistribution(-7)
+    _ = iris.plotmerit(-7)
+
+
+
+
+.. rst-class:: sphx-glr-horizontal
+
+
+    *
+
+      .. image:: /gettingstarted/gallery/auto_examples/analysis/images/sphx_glr_plot_2D_iris_007.png
+          :alt: L curve, manual search
+          :class: sphx-glr-multi-img
+
+    *
+
+      .. image:: /gettingstarted/gallery/auto_examples/analysis/images/sphx_glr_plot_2D_iris_008.png
+          :alt: plot 2D iris
+          :class: sphx-glr-multi-img
+
+    *
+
+      .. image:: /gettingstarted/gallery/auto_examples/analysis/images/sphx_glr_plot_2D_iris_009.png
+          :alt: 2D IRIS merit plot, $\lambda$ = 1.00e-05
+          :class: sphx-glr-multi-img
+
+
+
+
+
+## Automatic search
+
+Now try an automatic search of the regularization parameter:
+
+
+.. code-block:: default
+
+
+    param = {"epsRange": [-8, -1, 50], "lambdaRange": [-10, 1], "kernel": "langmuir"}
+
+    iris = scp.IRIS(X_, param)
+    iris.plotlcurve(title="L curve, automated search")
+
+
+
+
+
+.. image:: /gettingstarted/gallery/auto_examples/analysis/images/sphx_glr_plot_2D_iris_010.png
+    :alt: L curve, automated search
+    :class: sphx-glr-single-img
+
+
+.. rst-class:: sphx-glr-script-out
+
+ Out:
+
+ .. code-block:: none
+
+
+    <AxesSubplot:title={'center':'L curve, automated search'}, xlabel='Residuals', ylabel='Curvature'>
+
+
+
+The data corresponding to the largest curvature of the L-curve
+are at the second last position of output data:
+
+
+.. code-block:: default
+
+
+    iris.plotdistribution(-2)
+    _ = iris.plotmerit(-2)
+
+    ""
+    # scp.show()  # uncomment to show plot if needed (not necessary in jupyter notebook)
+
+
+
+.. rst-class:: sphx-glr-horizontal
+
+
+    *
+
+      .. image:: /gettingstarted/gallery/auto_examples/analysis/images/sphx_glr_plot_2D_iris_011.png
+          :alt: plot 2D iris
+          :class: sphx-glr-multi-img
+
+    *
+
+      .. image:: /gettingstarted/gallery/auto_examples/analysis/images/sphx_glr_plot_2D_iris_012.png
+          :alt: 2D IRIS merit plot, $\lambda$ = 1.54e-06
+          :class: sphx-glr-multi-img
+
+
+.. rst-class:: sphx-glr-script-out
+
+ Out:
+
+ .. code-block:: none
+
+
+    ''
+
+
+
+
+.. rst-class:: sphx-glr-timing
+
+   **Total running time of the script:** ( 0 minutes  12.803 seconds)
+
+
+.. _sphx_glr_download_gettingstarted_gallery_auto_examples_analysis_plot_2D_iris.py:
+
+
+.. only :: html
+
+ .. container:: sphx-glr-footer
+    :class: sphx-glr-footer-example
+
+
+
+  .. container:: sphx-glr-download sphx-glr-download-python
+
+     :download:`Download Python source code: plot_2D_iris.py <plot_2D_iris.py>`
+
+
+
+  .. container:: sphx-glr-download sphx-glr-download-jupyter
+
+     :download:`Download Jupyter notebook: plot_2D_iris.ipynb <plot_2D_iris.ipynb>`
+
+
+.. only:: html
+
+ .. rst-class:: sphx-glr-signature
+
+    `Gallery generated by Sphinx-Gallery <https://sphinx-gallery.github.io>`_

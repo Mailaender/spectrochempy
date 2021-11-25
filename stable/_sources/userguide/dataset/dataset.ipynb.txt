@@ -1,0 +1,1625 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "39912920",
+   "metadata": {},
+   "source": [
+    "# The NDDataset object"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "95275701",
+   "metadata": {},
+   "source": [
+    "The NDDataset is the main object use by **SpectroChemPy**.\n",
+    "\n",
+    "Like numpy ndarrays, NDDataset have the capability to be sliced, sorted and subject to matematical operations.\n",
+    "\n",
+    "But, in addition, NDDataset may have units, can be masked and each dimensions can have coordinates also with units.\n",
+    "This make NDDataset aware of unit compatibility, *e.g.*, for binary operation such as addtions or subtraction or\n",
+    "during the application of mathematical operations. In addition or in replacement of numerical data for coordinates,\n",
+    "NDDatset can also have labeled coordinates where labels can be different kind of objects (strings, datetime,\n",
+    "numpy nd.ndarray or othe NDDatasets, etc...).\n",
+    "\n",
+    "This offers a lot of flexibility in using NDDatasets that,  we hope, will be useful for applications.\n",
+    "See the **Tutorials** for more information about such possible applications."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "86c0492e",
+   "metadata": {},
+   "source": [
+    "**Below (and in the next sections), we try to give an almost complete view of the NDDataset features.**"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "1bf0add8",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import spectrochempy as scp"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "e2260216",
+   "metadata": {},
+   "source": [
+    "As we will make some reference to the `numpy` library, we also import it here."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "2bb9c8c2",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import numpy as np"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "c1a01d80",
+   "metadata": {},
+   "source": [
+    "We additionnaly import the three main SpectroChemPy objects that we will use through this tutorial"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "25a56878",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from spectrochempy import NDDataset, CoordSet, Coord"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "79cfc374",
+   "metadata": {},
+   "source": [
+    "For a convenient usage of units, we will also directly import `ur`, the unit registry which contains all available\n",
+    "units."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "99f8a6dd",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from spectrochempy import ur"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "0ed2dcbb",
+   "metadata": {},
+   "source": [
+    "Multidimensional array are defined in Spectrochempy using the `NDDataset` object.\n",
+    "\n",
+    "`NDDataset` objects mostly behave as numpy's `numpy.ndarray`\n",
+    "(see for instance __[numpy quikstart tutorial](https://numpy.org/doc/stable/user/quickstart.html)__)."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "e16bc43d",
+   "metadata": {},
+   "source": [
+    "However, unlike raw numpy's ndarray, the presence of optional properties make them (hopefully) more appropriate for\n",
+    "handling spectroscopic information, one of the major objectives of the SpectroChemPy package:\n",
+    "\n",
+    "*  `mask`: Data can be partially masked at will\n",
+    "*  `units`: Data can have units, allowing units-aware operations\n",
+    "*  `coordset`: Data can have a set of coordinates, one or sevral by dimensions\n",
+    "\n",
+    "Additional metadata can also be added to the instances of this class through the `meta` properties."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "2dda83e4",
+   "metadata": {},
+   "source": [
+    "## 1D-Dataset (unidimensional dataset)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "c7b0a8d0",
+   "metadata": {},
+   "source": [
+    "In the following example, a minimal 1D dataset is created from a simple list, to which we can add some metadata:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "0e6e55c1",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "d1D = NDDataset(\n",
+    "    [10.0, 20.0, 30.0],\n",
+    "    name=\"Dataset N1\",\n",
+    "    author=\"Blake and Mortimer\",\n",
+    "    description=\"A dataset from scratch\",\n",
+    ")\n",
+    "d1D"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "ecaf9004",
+   "metadata": {},
+   "source": [
+    "<div class='alert alert-info'>\n",
+    "    <b>Note</b>\n",
+    "\n",
+    " In the above code, run in a notebook, the output of d1D is in html for a nice display.\n",
+    "\n",
+    " To get the same effect, from a console script, one can use `print_` (with an underscore) and not the usual python\n",
+    " function `print`. As you can see below, the `print` function only gives a short summary of the information,\n",
+    " while the `print_` method gives more detailed output\n",
+    "\n",
+    "</div>"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "d67f6a49",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "print(d1D)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "f687e3ec",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "scp.print_(d1D)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "9cbe0cfd",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "_ = d1D.plot(figsize=(3, 2))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "5c2f3666",
+   "metadata": {},
+   "source": [
+    "Except few addtional metadata such `author`, `created` ..., there is not much\n",
+    "differences with respect to a conventional `numpy.ndarray`. For example, one\n",
+    "can apply numpy ufunc's directly to a NDDataset or make basic arithmetic\n",
+    "operation with these objects:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "7b981af7",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "np.sqrt(d1D)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "cc5e29b8",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "d1D + d1D / 2.0"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "8111d2b9",
+   "metadata": {},
+   "source": [
+    "As seen above, there are some metadata that are automatically added to the dataset:\n",
+    "\n",
+    "* `id`      : This is a unique identifier for the object\n",
+    "* `author`  : author determined from the computer name if not provided\n",
+    "* `created` : date/time of creation\n",
+    "* `modified`: date/time of modification\n",
+    "\n",
+    "additionaly, dataset can have a **`name`** (equal to the `id` if it is not provided)\n",
+    "\n",
+    "Some other metadata are defined:\n",
+    "\n",
+    "* `history`: history of operation achieved on the object since the object creation\n",
+    "* `description`: A user friendly description of the objects purpose or contents.\n",
+    "* `title`: A title that will be used in plots or in some other operation on the objects.\n",
+    "\n",
+    "\n",
+    "All this metadata (except, the `id`, `created`, `modified`) can be changed by the user.\n",
+    "\n",
+    "For instance:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "30bd2afa",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "d1D.title = \"intensity\"\n",
+    "d1D.name = \"mydataset\"\n",
+    "d1D.history = \"created from scratch\"\n",
+    "d1D.description = \"Some experimental measurements\"\n",
+    "d1D"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "382fdda6",
+   "metadata": {},
+   "source": [
+    "d1D is a 1D (1-dimensional) dataset with only one dimension.\n",
+    "\n",
+    "Some attributes are useful to check this kind of information:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "2dd467e7",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "d1D.shape  # the shape of 1D contain only one dimension size"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "99aa5ac3",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "d1D.ndim  # the number of dimensions"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "9e326478",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "d1D.dims  # the name of the dimension (it has been automatically attributed)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "b38bf296",
+   "metadata": {},
+   "source": [
+    "**Note**: The names of the dimensions are set automatically. But they can be changed, with the limitation that the\n",
+    "name must be a single letter."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "496917ce",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "d1D.dims = [\"q\"]  # change the list of dim names."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "a4ac8dc0",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "d1D.dims"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "7fa3a5b4",
+   "metadata": {},
+   "source": [
+    "### nD-Dataset (multidimensional dataset)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "a378ad17",
+   "metadata": {},
+   "source": [
+    "To create a nD NDDataset, we can provide a nD-array like object to the NDDataset instance constructor"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "e9811e60",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "a = np.random.rand(2, 4, 6)\n",
+    "a"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "50ac36c7",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "d3D = NDDataset(a)\n",
+    "d3D.title = \"energy\"\n",
+    "d3D.author = \"Someone\"\n",
+    "d3D.name = \"3D dataset creation\"\n",
+    "d3D.history = \"created from scratch\"\n",
+    "d3D.description = \"Some example\"\n",
+    "d3D.dims = [\"u\", \"v\", \"t\"]\n",
+    "d3D"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "4780a08f",
+   "metadata": {},
+   "source": [
+    "We can also add all information in a single statement"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "48bdc7d3",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "d3D = NDDataset(\n",
+    "    a,\n",
+    "    dims=[\"u\", \"v\", \"t\"],\n",
+    "    title=\"Energy\",\n",
+    "    author=\"Someone\",\n",
+    "    name=\"3D_dataset\",\n",
+    "    history=\"created from scratch\",\n",
+    "    description=\"a single statement creation example\",\n",
+    ")\n",
+    "d3D"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "192e7352",
+   "metadata": {},
+   "source": [
+    "Three names are attributed at the creation (if they are not provided with the `dims` attribute, then the name are:\n",
+    "'z','y','x' automatically attributed)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "a1075eaf",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "d3D.dims"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "bbe691c9",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "d3D.ndim"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "3ef718f3",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "d3D.shape"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "16d20fb7",
+   "metadata": {},
+   "source": [
+    "## Units"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "4c162034",
+   "metadata": {},
+   "source": [
+    "One interesting possibility for a NDDataset is to have defined units for the internal data."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "0c3c29cc",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "d1D.units = ur.eV  # ur is a registry containing all available units"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "60f6609a",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "d1D  # note the eV symbol of the units added to the values field below"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "31912994",
+   "metadata": {},
+   "source": [
+    "This allows to make units-aware calculations:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "43d409ce",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "d1D ** 2  # note the results in eV^2"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "1d231114",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "np.sqrt(d1D)  # note the result in e^0.5"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "94a090ca",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "time = 5.0 * ur.second\n",
+    "d1D / time  # here we get results in eV/s"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "7b1147c8",
+   "metadata": {},
+   "source": [
+    "Conversion can be done between different units transparently"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "a6d375e7",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "d1D.to(\"J\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "733cc740",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "d1D.to(\"K\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "c54722a2",
+   "metadata": {},
+   "source": [
+    "## Coordinates"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "3bbcc703",
+   "metadata": {},
+   "source": [
+    "The above created `d3D` dataset has 3 dimensions, but no coordinate for these dimensions. Here arises a big difference\n",
+    "with simple `numpy`-arrays:\n",
+    "* We can add coordinates to each dimensions of a NDDataset."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "08889885",
+   "metadata": {},
+   "source": [
+    "To get the list of all defined coordinates, we can use the `coords` attribute:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "d51645d9",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "d3D.coordset  # no coordinates, so it returns nothing (None)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "b522efaf",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "d3D.t  # the same for coordinate  t, v, u which are not yet set"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "0ff3e83c",
+   "metadata": {},
+   "source": [
+    "To add coordinates, on way is to set them one by one:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "3515ee7c",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "d3D.t = (\n",
+    "    Coord.arange(6) * 0.1\n",
+    ")  # we need a sequence of 6 values for `t` dimension (see shape above)\n",
+    "d3D.t.title = \"time\"\n",
+    "d3D.t.units = ur.seconds\n",
+    "d3D.coordset  # now return a list of coordinates"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "3f7c6e41",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "d3D.t"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "701a0937",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "d3D.coordset(\"t\")  # Alternative way to get a given coordinates"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "361d3405",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "d3D[\"t\"]  # another alternative way to get a given coordinates"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "245bc62d",
+   "metadata": {},
+   "source": [
+    "The two other coordinates u and v are still undefined"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "0b8cb179",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "d3D.u, d3D.v"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "a6c927ad",
+   "metadata": {},
+   "source": [
+    "When the dataset is printed, only the information for the existing coordinates is given."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "b860d658",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "d3D"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "99898aff",
+   "metadata": {},
+   "source": [
+    "Programatically, we can use the attribute `is_empty` or `has_data` to check this"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "7a6303d0",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "d3D.v.has_data, d3D.v.is_empty"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "d70b5063",
+   "metadata": {},
+   "source": [
+    "An error is raised when a coordinate doesn't exist"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "32d8f278",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "try:\n",
+    "    d3D.x\n",
+    "except KeyError as e:\n",
+    "    scp.error_(e)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "2b5e7200",
+   "metadata": {},
+   "source": [
+    "In some case it can also be usefull to get a coordinate from its title instead of its name (the limitation is that if\n",
+    "several coordinates have the same title, then only the first ones that is found in the coordinate list, will be\n",
+    "returned - this can be ambiguous)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "9336e8b7",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "d3D[\"time\"]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "b7a9d4e3",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "d3D.time"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "cd5ec90c",
+   "metadata": {},
+   "source": [
+    "## Labels"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "91527a42",
+   "metadata": {},
+   "source": [
+    "It is possible to use labels instead of numerical coordinates. They are sequence of objects .The length of the\n",
+    "sequence must be equal to the size of a dimension."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "79ad20d0",
+   "metadata": {},
+   "source": [
+    "The labels can be simple strings, *e.g.,*"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "88403af4",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "tags = list(\"ab\")\n",
+    "d3D.u.title = \"some tags\"\n",
+    "d3D.u.labels = tags  # TODO: avoid repetition\n",
+    "d3D"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "2fbf867c",
+   "metadata": {},
+   "source": [
+    "or more complex objects.\n",
+    "\n",
+    "For instance here we use datetime.timedelta objets:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "4456fc0b",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from datetime import timedelta\n",
+    "\n",
+    "start = timedelta(0)\n",
+    "times = [start + timedelta(seconds=x * 60) for x in range(6)]\n",
+    "d3D.t = None\n",
+    "d3D.t.labels = times\n",
+    "d3D.t.title = \"time\"\n",
+    "d3D"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "4a7c1654",
+   "metadata": {},
+   "source": [
+    "In this case, getting a coordinate that doesn't possess numerical data but labels, will return the labels"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "6e3f8cad",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "d3D.time"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "cd2de966",
+   "metadata": {},
+   "source": [
+    "# More insight on coordinates"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "82d4c8b3",
+   "metadata": {},
+   "source": [
+    "## Sharing coordinates between dimensions"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "7b849a49",
+   "metadata": {},
+   "source": [
+    "Sometimes it is not necessary to have different coordinates for the each axes. Some can be shared between axes.\n",
+    "\n",
+    "For example, if we have a square matrix with the same coordinate in the two dimensions, the second dimension can\n",
+    "refer to the first. Here we create a square 2D dataset, using the `diag` method:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "37b5d3f9",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "nd = NDDataset.diag((3, 3, 2.5))\n",
+    "nd"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "442fe3aa",
+   "metadata": {},
+   "source": [
+    "and then we add the same coordinate for both dimensions"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "2b1343dc",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "coordx = Coord.arange(3)\n",
+    "nd.set_coordset(x=coordx, y=\"x\")\n",
+    "nd"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "eeab40cd",
+   "metadata": {},
+   "source": [
+    "## Setting coordinates using `set_coordset`"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "929b9f01",
+   "metadata": {},
+   "source": [
+    "Lets create 3 `Coord` objects to be use a s coordinates for the 3 dimensions of the previous d3D dataset."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "435fe221",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "d3D.dims = [\"t\", \"v\", \"u\"]\n",
+    "s0, s1, s2 = d3D.shape\n",
+    "coord0 = Coord.linspace(10.0, 100.0, s0, units=\"m\", title=\"distance\")\n",
+    "coord1 = Coord.linspace(20.0, 25.0, s1, units=\"K\", title=\"temperature\")\n",
+    "coord2 = Coord.linspace(0.0, 1000.0, s2, units=\"hour\", title=\"elapsed time\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "b9d719af",
+   "metadata": {},
+   "source": [
+    "### Syntax 1"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "535ca31d",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "d3D.set_coordset(u=coord2, v=coord1, t=coord0)\n",
+    "d3D"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "0e02ba9f",
+   "metadata": {},
+   "source": [
+    "### Syntax 2"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "07dce81f",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "d3D.set_coordset({\"u\": coord2, \"v\": coord1, \"t\": coord0})\n",
+    "d3D"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "1fcbbdd5",
+   "metadata": {},
+   "source": [
+    "## Adding several coordinates to a single dimension\n",
+    "We can add several coordinates to the same dimension"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "58c0f068",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "coord1b = Coord([1, 2, 3, 4], units=\"millitesla\", title=\"magnetic field\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "9a9bef00",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "d3D.set_coordset(u=coord2, v=[coord1, coord1b], t=coord0)\n",
+    "d3D"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "a23950ec",
+   "metadata": {},
+   "source": [
+    "We can retrieve the various coordinates for a single dimention easily:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "dfb820bb",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "d3D.v_1"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "0e0b1bba",
+   "metadata": {},
+   "source": [
+    "## Summary of the coordinate setting syntax\n",
+    "Some additional information about coordinate setting syntax"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "542fb171",
+   "metadata": {},
+   "source": [
+    "**A.** First syntax (probably the safer because the name of the dimension is specified, so this is less prone to\n",
+    "errors!)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "eb57a340",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "d3D.set_coordset(u=coord2, v=[coord1, coord1b], t=coord0)\n",
+    "# or equivalent\n",
+    "d3D.set_coordset(u=coord2, v=CoordSet(coord1, coord1b), t=coord0)\n",
+    "d3D"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "edfeb0a1",
+   "metadata": {},
+   "source": [
+    "**B.** Second syntax assuming the coordinates are given in the order of the dimensions.\n",
+    "\n",
+    "Remember that we can check this order using the `dims` attribute of a NDDataset"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "288a57d5",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "d3D.dims"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "df148fd9",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "d3D.set_coordset((coord0, [coord1, coord1b], coord2))\n",
+    "# or equivalent\n",
+    "d3D.set_coordset(coord0, CoordSet(coord1, coord1b), coord2)\n",
+    "d3D"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "62c9e27c",
+   "metadata": {},
+   "source": [
+    "**C.** Third syntax (from a dictionary)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "f7d7d15d",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "d3D.set_coordset({\"t\": coord0, \"u\": coord2, \"v\": [coord1, coord1b]})\n",
+    "d3D"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "cc90fe83",
+   "metadata": {},
+   "source": [
+    "**D.** It is also possible to use directly the `coordset` property"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "0624ee5d",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "d3D.coordset = coord0, [coord1, coord1b], coord2\n",
+    "d3D"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "241fef3f",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "d3D.coordset = {\"t\": coord0, \"u\": coord2, \"v\": [coord1, coord1b]}\n",
+    "d3D"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "16e05aa4",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "d3D.coordset = CoordSet(t=coord0, u=coord2, v=[coord1, coord1b])\n",
+    "d3D"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "421743da",
+   "metadata": {},
+   "source": [
+    "<div class='alert alert-warning'>\n",
+    "<b>WARNING</b>\n",
+    "\n",
+    "Do not use list for setting multiples coordinates! use tuples\n",
+    "</div>"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "8b66cca7",
+   "metadata": {},
+   "source": [
+    "This raise an error (list have another signification: it's used to set a \"same dim\" CoordSet see example A or B)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "c9414069",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "try:\n",
+    "    d3D.coordset = [coord0, coord1, coord2]\n",
+    "except ValueError:\n",
+    "    scp.error_(\n",
+    "        \"Coordinates must be of the same size for a dimension with multiple coordinates\"\n",
+    "    )"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "39431aa6",
+   "metadata": {},
+   "source": [
+    "This works : it use a tuple `()`, not a list `[]`"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "d09be286",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "d3D.coordset = (\n",
+    "    coord0,\n",
+    "    coord1,\n",
+    "    coord2,\n",
+    ")  # equivalent to d3D.coordset = coord0, coord1, coord2\n",
+    "d3D"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "6cd06cc9",
+   "metadata": {},
+   "source": [
+    "**E.** Setting the coordinates individually"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "4bcce674",
+   "metadata": {},
+   "source": [
+    "Either a single coordinate"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "dc02a183",
+   "metadata": {
+    "lines_to_next_cell": 0
+   },
+   "outputs": [],
+   "source": [
+    "d3D.u = coord2\n",
+    "d3D"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "6bd37df3",
+   "metadata": {},
+   "source": [
+    "or multiple coordinates for a single dimension"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "4b38291f",
+   "metadata": {
+    "lines_to_next_cell": 0
+   },
+   "outputs": [],
+   "source": [
+    "d3D.v = [coord1, coord1b]\n",
+    "d3D"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "2265fa98",
+   "metadata": {},
+   "source": [
+    "or using a CoorSet object."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "9978a0d3",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "d3D.v = CoordSet(coord1, coord1b)\n",
+    "d3D"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "e98805c9",
+   "metadata": {},
+   "source": [
+    "# Methods to create NDDataset\n",
+    "\n",
+    "There are many ways to create `NDDataset` objects.\n",
+    "\n",
+    "Let's first create 2 coordinate objects, for which we can define `labels` and `units`! Note the use of the function\n",
+    "`linspace`to generate the data."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "2f40f57c",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "c0 = Coord.linspace(\n",
+    "    start=4000.0, stop=1000.0, num=5, labels=None, units=\"cm^-1\", title=\"wavenumber\"\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "35f03e57",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "c1 = Coord.linspace(\n",
+    "    10.0, 40.0, 3, labels=[\"Cold\", \"RT\", \"Hot\"], units=\"K\", title=\"temperature\"\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "39266c51",
+   "metadata": {},
+   "source": [
+    "The full coordset will be the following"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "fe7a23c9",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "cs = CoordSet(c0, c1)\n",
+    "cs"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "24ef5bfb",
+   "metadata": {},
+   "source": [
+    "Now we will generate the full dataset, using a ``fromfunction`` method. All needed information are passed as\n",
+    "parameter of the NDDataset instance constructor."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "867f2ba8",
+   "metadata": {},
+   "source": [
+    "## Create a dataset from a function"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "cb064459",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "def func(x, y, extra):\n",
+    "    return x * y / extra"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "bba162c3",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "ds = NDDataset.fromfunction(\n",
+    "    func,\n",
+    "    extra=100 * ur.cm ** -1,  # extra arguments passed to the function\n",
+    "    coordset=cs,\n",
+    "    name=\"mydataset\",\n",
+    "    title=\"absorbance\",\n",
+    "    units=None,\n",
+    ")  # when None, units will be determined from the function results\n",
+    "\n",
+    "ds.description = \"\"\"Dataset example created for this tutorial.\n",
+    "It's a 2-D dataset\"\"\"\n",
+    "\n",
+    "ds.author = \"Blake & Mortimer\"\n",
+    "ds"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "cfd3777f",
+   "metadata": {},
+   "source": [
+    "## Using numpy-like constructors of NDDatasets"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "33776148",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "dz = NDDataset.zeros(\n",
+    "    (5, 3), coordset=cs, units=\"meters\", title=\"Datasets with only zeros\"\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "c169b57d",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "do = NDDataset.ones(\n",
+    "    (5, 3), coordset=cs, units=\"kilograms\", title=\"Datasets with only ones\"\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "c22a0b85",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "df = NDDataset.full(\n",
+    "    (5, 3), fill_value=1.25, coordset=cs, units=\"radians\", title=\"with only float=1.25\"\n",
+    ")\n",
+    "df"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "447ee25c",
+   "metadata": {},
+   "source": [
+    "As with numpy, it is also possible to take another dataset as a template:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "bf88ce5c",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "df = NDDataset.full_like(d3D, dtype=\"int\", fill_value=2)\n",
+    "df"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "b49b6926",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "nd = NDDataset.diag((3, 3, 2.5))\n",
+    "nd"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "7d6ef54f",
+   "metadata": {},
+   "source": [
+    "## Copying existing NDDataset\n",
+    "\n",
+    "To copy an existing dataset, this is as simple as:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "a3c5d3e4",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "d3D_copy = d3D.copy()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "736a8cf0",
+   "metadata": {},
+   "source": [
+    "or alternatively:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "33e4ee8d",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "d3D_copy = d3D[:]"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "e9909787",
+   "metadata": {},
+   "source": [
+    "Finally, it is also possible to initialize a dataset using an existing one:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "d68d3fe2",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "d3Dduplicate = NDDataset(d3D, name=\"duplicate of %s\" % d3D.name, units=\"absorbance\")\n",
+    "d3Dduplicate"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "e5d3f9c2",
+   "metadata": {},
+   "source": [
+    "## Importing from external dataset\n",
+    "\n",
+    "NDDataset can be created from the importation of external data\n",
+    "\n",
+    "A **test**'s data folder contains some data for experimenting some features of datasets."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "19831e92",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# let check if this directory exists and display its actual content:\n",
+    "datadir = scp.preferences.datadir\n",
+    "if datadir.exists():\n",
+    "    print(datadir.name)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "46523f06",
+   "metadata": {},
+   "source": [
+    "Let's load grouped IR spectra acquired using OMNIC:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "76cfa3c4",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "nd = NDDataset.read_omnic(datadir / \"irdata/nh4y-activation.spg\")\n",
+    "nd.preferences.reset()\n",
+    "_ = nd.plot()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "4790af6f",
+   "metadata": {},
+   "source": [
+    "Even if we do not specify the **datadir**, the application first look in tht directory by default."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "b046a0ce",
+   "metadata": {},
+   "source": [
+    "Now, lets load a NMR dataset (in the Bruker format)."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "aa73a1a6",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "path = datadir / \"nmrdata\" / \"bruker\" / \"tests\" / \"nmr\" / \"topspin_2d\"\n",
+    "\n",
+    "# load the data directly (no need to create the dataset first)\n",
+    "nd2 = NDDataset.read_topspin(path, expno=1, remove_digital_filter=True)\n",
+    "\n",
+    "# view it...\n",
+    "nd2.x.to(\"s\")\n",
+    "nd2.y.to(\"ms\")\n",
+    "\n",
+    "ax = nd2.plot(method=\"map\")"
+   ]
+  }
+ ],
+ "metadata": {
+  "jupytext": {
+   "formats": "ipynb,py:percent",
+   "notebook_metadata_filter": "all"
+  },
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.9.1"
+  },
+  "widgets": {
+   "application/vnd.jupyter.widget-state+json": {
+    "state": {},
+    "version_major": 2,
+    "version_minor": 0
+   }
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}

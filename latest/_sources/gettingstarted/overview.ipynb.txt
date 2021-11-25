@@ -1,0 +1,367 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "0dc7529f",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   },
+   "source": [
+    "# Overview"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "0f614c02",
+   "metadata": {},
+   "source": [
+    "The purpose of this page is to give you some quick examples of what can be done with SpectroChemPy.\n",
+    "\n",
+    "See the [gallery of examples](auto_examples/index.html) and consult the [user's guide](\n",
+    "../userguide/introduction/introduction.html) for more information on using SpectroChemPy\n",
+    "\n",
+    "Before using the package, we must load the **API\n",
+    "(Application Programming Interface)**\n",
+    "\n",
+    "The simplest way is to import all objects and methods at once into your\n",
+    "python namespace. The loading step may take several seconds due to the\n",
+    "large number of methods to be imported into the API namespace."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "cb00cba7",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from spectrochempy import *"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "823da92c",
+   "metadata": {},
+   "source": [
+    "## NDDataset, the main object"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "319ed604",
+   "metadata": {},
+   "source": [
+    "NDDataset is a python object, actually a container, which can represent most of your multidimensional spectroscopic\n",
+    "data.\n",
+    "\n",
+    "For instance, in the following we read data from a series of FTIR experiments, provided  by the OMNIC software:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "adc11eda",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "ds = read(\"irdata/nh4y-activation.spg\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "c941f417",
+   "metadata": {},
+   "source": [
+    "### Display dataset information"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "091015ff",
+   "metadata": {},
+   "source": [
+    "Short information:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "7d19db42",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "print(ds)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "597822fe",
+   "metadata": {},
+   "source": [
+    "Detailed information on the main metatdata:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "dce59d34",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "ds"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "c7526666",
+   "metadata": {},
+   "source": [
+    "### Plotting a dataset"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "4e31c911",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "_ = ds.plot()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "57dc271a",
+   "metadata": {},
+   "source": [
+    "### Slicing a dataset"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "f3edf3dd",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "region = ds[:, 4000.0:2000.0]\n",
+    "_ = region.plot()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "be0a16e3",
+   "metadata": {},
+   "source": [
+    "### Maths on datasets"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "e114937b",
+   "metadata": {
+    "jupyter": {
+     "source_hidden": true
+    }
+   },
+   "outputs": [],
+   "source": [
+    "region.y -= region.y[0]  # make y coordinate reative to the first point\n",
+    "region.y.title = \"time of dehydratation\"\n",
+    "region -= region[-1]  # suppress the last spectra to all\n",
+    "_ = region.plot(colorbar=True)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "d60dafbd",
+   "metadata": {},
+   "source": [
+    "### Processing a dataset"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "720808d8",
+   "metadata": {},
+   "source": [
+    "We just give here few examples"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "59dd7448",
+   "metadata": {},
+   "source": [
+    "#### Smoothing"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "ee5f20f4",
+   "metadata": {
+    "jupyter": {
+     "source_hidden": true
+    }
+   },
+   "outputs": [],
+   "source": [
+    "smoothed = region.smooth(window_length=51, window=\"hanning\")\n",
+    "_ = smoothed.plot(colormap=\"magma\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "290bc37d",
+   "metadata": {},
+   "source": [
+    "#### Baseline correction"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "3c215606",
+   "metadata": {
+    "jupyter": {
+     "source_hidden": true
+    }
+   },
+   "outputs": [],
+   "source": [
+    "region = ds[:, 4000.0:2000.0]\n",
+    "smoothed = region.smooth(window_length=51, window=\"hanning\")\n",
+    "blc = BaselineCorrection(smoothed)\n",
+    "basc = blc.compute(\n",
+    "    [2000.0, 2300.0],\n",
+    "    [3800.0, 3900.0],\n",
+    "    method=\"multivariate\",\n",
+    "    interpolation=\"pchip\",\n",
+    "    npc=5,\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "2c19166c",
+   "metadata": {
+    "jupyter": {
+     "source_hidden": true
+    }
+   },
+   "outputs": [],
+   "source": [
+    "_ = basc.plot()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "e90c5bcc",
+   "metadata": {},
+   "source": [
+    "### Analyis\n",
+    "\n",
+    "#### IRIS processing"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "9139945a",
+   "metadata": {
+    "jupyter": {
+     "source_hidden": true
+    }
+   },
+   "outputs": [],
+   "source": [
+    "ds = NDDataset.read_omnic(\"irdata/CO@Mo_Al2O3.SPG\")[:, 2250.0:1950.0]\n",
+    "pressure = [\n",
+    "    0.00300,\n",
+    "    0.00400,\n",
+    "    0.00900,\n",
+    "    0.01400,\n",
+    "    0.02100,\n",
+    "    0.02600,\n",
+    "    0.03600,\n",
+    "    0.05100,\n",
+    "    0.09300,\n",
+    "    0.15000,\n",
+    "    0.20300,\n",
+    "    0.30000,\n",
+    "    0.40400,\n",
+    "    0.50300,\n",
+    "    0.60200,\n",
+    "    0.70200,\n",
+    "    0.80100,\n",
+    "    0.90500,\n",
+    "    1.00400,\n",
+    "]\n",
+    "ds.y = Coord(pressure, title=\"Pressure\", units=\"torr\")\n",
+    "_ = ds.plot(colormap=\"magma\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "71b500f6",
+   "metadata": {
+    "jupyter": {
+     "source_hidden": true
+    }
+   },
+   "outputs": [],
+   "source": [
+    "param = {\"epsRange\": [-8, -1, 50], \"lambdaRange\": [-10, 1, 12], \"kernel\": \"langmuir\"}\n",
+    "\n",
+    "iris = IRIS(ds, param, verbose=False)\n",
+    "_ = iris.plotdistribution(-7, colormap=\"magma\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "baf146f4",
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "jupytext": {
+   "formats": "ipynb,py:percent",
+   "notebook_metadata_filter": "all"
+  },
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.8.0"
+  },
+  "widgets": {
+   "application/vnd.jupyter.widget-state+json": {
+    "state": {},
+    "version_major": 2,
+    "version_minor": 0
+   }
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}
